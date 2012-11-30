@@ -1,0 +1,42 @@
+[
+    {
+        "pk": 1,
+        "model": "events.rule",
+        "fields": {
+            "frequency": "YEARLY",
+            "params": null,
+            "name": "Yearly",
+            "description": "will recur once every Year"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "events.rule",
+        "fields": {
+            "frequency": "MONTHLY",
+            "params": null,
+            "name": "Monthly",
+            "description": "will recur once every Month"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "events.rule",
+        "fields": {
+            "frequency": "WEEKLY",
+            "params": null,
+            "name": "Weekly",
+            "description": "will recur once every Week"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "events.rule",
+        "fields": {
+            "frequency": "DAILY",
+            "params": null,
+            "name": "Daily",
+            "description": "will recur once every Day"
+        }
+    }
+]
