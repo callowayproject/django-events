@@ -1,24 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup
+import os
+from setuptools import setup, find_packages
 
+
+def read_file(filename):
+    """Read a file into a string"""
+    path = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(path, filename)
+    try:
+        return open(filepath).read()
+    except IOError:
+        return ''
+
+
+def get_readme():
+    """Return the README file contents. Supports text, rst, and markdown"""
+    for name in ('README', 'README.rst', 'README.md'):
+        if os.path.exists(name):
+            return read_file(name)
+    return ''
+
+# Use the docstring of the __init__ file to be the description
+DESC = " ".join(__import__('events').__doc__.splitlines()).strip()
 
 setup(
-    name='django-schedule',
-    version='0.5b',
-    description='A calendaring app for Django.',
+    name='django-events',
+    version=__import__('events').get_version().replace(' ', '-'),
+    description=DESC,
     author='Anthony Robert Hauber',
-    author_email='thauber@gmail.com',
-    url='http://github.com/thauber/django-schedule/tree/master',
-    packages=[
-        'events',
-        'events.feeds',
-        'events.management',
-        'events.management.commands',
-        'events.models',
-        'events.templatetags',
-        'events.tests',
-    ],
+    author_email='webmaster@callowayproject.com',
+    url='https://github.com/callowayproject/django-events',
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     classifiers=['Development Status :: 4 - Beta',
