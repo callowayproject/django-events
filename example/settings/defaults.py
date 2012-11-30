@@ -1,7 +1,10 @@
 # Django settings for example project.
 import os
+import sys
 
-PROJECT_DIR = os.path.abspath('%s/../../' % os.path.dirname(__file__))
+PROJECT_DIR = os.path.abspath('%s/../' % os.path.dirname(__file__))
+APP_DIR = os.path.abspath('%s/../../' % os.path.dirname(__file__))
+sys.path.insert(0, APP_DIR)
 
 DEBUG = False
 
@@ -16,7 +19,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '%s/config/db/example.db' % PROJECT_DIR,
+        'NAME': 'dev.db',
     }
 }
 
@@ -89,10 +92,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, "templates"),

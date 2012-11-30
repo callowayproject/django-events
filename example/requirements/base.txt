@@ -2,3 +2,4 @@ Django==1.4.2
 python-dateutil==2.1
 django-bootstrap-form==2.0.4
 vobject==0.8.1c
+South
