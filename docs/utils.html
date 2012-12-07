@@ -1,0 +1,164 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Utilities &mdash; Django Events 0.6b1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6b1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Events 0.6b1 documentation" href="index.html" />
+    <link rel="next" title="Useful Template Tags" href="template_tags.html" />
+    <link rel="prev" title="Periods" href="periods.html" /> 
+  </head>
+  <body>
+<div id="docstitle">
+	<p>Django Events 0.6b1 documentation</p>
+</div>
+<div id="header">
+	<div id="title"><h1>Utilities</h1></div>
+	<ul id="headerButtons">
+		<li id="toc_button"><div class="headerButton"><a href="#">Table of Contents</a></div></li>
+		<li id="page_buttons">
+			<div class="headerButton"><a href="genindex.html" title="General Index" accesskey="I">index</a></div>
+			<div class="headerButton"><a href="template_tags.html" title="Useful Template Tags" accesskey="N">next</a></div>
+			<div class="headerButton"><a href="periods.html" title="Periods" accesskey="P">previous</a></div>
+		</li>
+	</ul>
+</div>
+
+<div id="sphinxsidebar">
+  <div class="sphinxsidebarwrapper">
+	<ul><li class="toctree-l1"><a href="index.html">Main Page</a></li></ul>
+	<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">A Quick Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periods.html">Periods</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_tags.html">Useful Template Tags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+
+      <h3>This Page</h3>
+      <ul class="this-page-menu">
+        <li><a href="_sources/utils.txt"
+               rel="nofollow">Show Source</a></li>
+      </ul>
+    <div id="searchbox" style="display: none">
+      
+        <form class="search" action="search.html" method="get">
+			<div class="search-wrapper">
+			<span class="search-left"></span>
+			<input class="prettysearch" type="text" name="q" size="18" />
+			<span class="search-right">&nbsp;</span>
+			</div>
+          <input type="submit" value="Search" class="searchbutton" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+        <p class="searchtip" style="font-size: 90%">
+        Enter search terms or a module, class or function name.
+        </p>
+    </div>
+    <script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+</div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="utilities">
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<p>There are some utility classes found in the utils module that help with certain tasks.</p>
+<div class="section" id="eventlistmanager">
+<h2>EventListManager<a class="headerlink" href="#eventlistmanager" title="Permalink to this headline">¶</a></h2>
+<p>EventListManager objects are instantiated with a list of events. That list of events dictates the following methods</p>
+<div class="section" id="occurrences-after-after">
+<h3><tt class="docutils literal"><span class="pre">occurrences_after(after)</span></tt><a class="headerlink" href="#occurrences-after-after" title="Permalink to this headline">¶</a></h3>
+<p>Creates a generator that produces the next occurrence inclusively after the datetime <tt class="docutils literal"><span class="pre">after</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="occurrencereplacer">
+<h2>OccurrenceReplacer<a class="headerlink" href="#occurrencereplacer" title="Permalink to this headline">¶</a></h2>
+<p>If you get more into the internals of django-schedule, and decide to create your own method for producing occurrences, instead of using one of the public facing methods for this, you are going to want to replace the occurrence you produce with a persisted one, if a persisted one exists.  To facilitate this in a standardized way you have the OccurrenceReplacer class.</p>
+<p>To instantiate it you give it the pool of persisted occurrences you would like to check in.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">persisted_occurrences</span> <span class="o">=</span> <span class="n">my_event</span><span class="o">.</span><span class="n">occurrence_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">occ_replacer</span> <span class="o">=</span> <span class="n">OccurrenceReplacer</span><span class="p">(</span><span class="n">persisted_occurrences</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now you have two convenient methods</p>
+<div class="section" id="get-occurrence-occurrence">
+<h3><tt class="docutils literal"><span class="pre">get_occurrence(occurrence)</span></tt><a class="headerlink" href="#get-occurrence-occurrence" title="Permalink to this headline">¶</a></h3>
+<p>This method returns either the passed in occurrence or the equivalent persisted occurrences from the pool of persisted occurrences this OccurrenceReplacer was instantiated with.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># my_generated_occurrence is an occurrence that was programatically</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># generated from an event</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">occurrence</span> <span class="o">=</span> <span class="n">occ_replacer</span><span class="o">.</span><span class="n">get_occurrence</span><span class="p">(</span><span class="n">my_generated_occurrence</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="has-occurrence-occurrence">
+<h3><tt class="docutils literal"><span class="pre">has_occurrence(occurrence)</span></tt><a class="headerlink" href="#has-occurrence-occurrence" title="Permalink to this headline">¶</a></h3>
+<p>This method returns a boolean. It returns True of the OccurrenceReplacer has an occurrence it would like to replace with the give occurrence, and false if it does not</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">my_generated_occurrence</span><span class="p">,</span> <span class="s">&#39;pk&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">occ_replacer</span><span class="o">.</span><span class="n">has_occurrence</span><span class="p">(</span><span class="n">my_generated_occurrence</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">occurrence</span> <span class="o">=</span> <span class="n">occ_replacer</span><span class="o">.</span><span class="n">get_occurrence</span><span class="p">(</span><span class="n">my_generated_occurrence</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">occurrence</span><span class="p">,</span> <span class="s">&#39;pk&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Now with my_other_occurrence which does not have a persisted counterpart</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">my_other_occurrence</span><span class="p">,</span> <span class="s">&#39;pk&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">occ_replacer</span><span class="o">.</span><span class="n">has_occurrence</span><span class="p">(</span><span class="n">my_other_occurrence</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">occurrence</span> <span class="o">=</span> <span class="n">occ_replacer</span><span class="o">.</span><span class="n">get_occurrence</span><span class="p">(</span><span class="n">my_other_occurrence</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">occurrence</span><span class="p">,</span> <span class="s">&#39;pk&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div> 
+        </div>
+      </div>
+    <div class="footer">
+    <p>
+      &copy; Copyright 2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+	</p>
+    </div>
+      <div class="clearer"></div>
+    </div>
+	<div id="breadcrumbs">
+		Utilities
+		</ul>
+	</div>
+	<script type="text/javascript" charset="utf-8" src="_static/toc.js"></script>
+  </body>
+</html>

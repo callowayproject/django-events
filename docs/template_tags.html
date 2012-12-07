@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Useful Template Tags &mdash; Django Events 0.6b1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6b1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Events 0.6b1 documentation" href="index.html" />
+    <link rel="next" title="Views" href="views.html" />
+    <link rel="prev" title="Utilities" href="utils.html" /> 
+  </head>
+  <body>
+<div id="docstitle">
+	<p>Django Events 0.6b1 documentation</p>
+</div>
+<div id="header">
+	<div id="title"><h1>Useful Template Tags</h1></div>
+	<ul id="headerButtons">
+		<li id="toc_button"><div class="headerButton"><a href="#">Table of Contents</a></div></li>
+		<li id="page_buttons">
+			<div class="headerButton"><a href="genindex.html" title="General Index" accesskey="I">index</a></div>
+			<div class="headerButton"><a href="views.html" title="Views" accesskey="N">next</a></div>
+			<div class="headerButton"><a href="utils.html" title="Utilities" accesskey="P">previous</a></div>
+		</li>
+	</ul>
+</div>
+
+<div id="sphinxsidebar">
+  <div class="sphinxsidebarwrapper">
+	<ul><li class="toctree-l1"><a href="index.html">Main Page</a></li></ul>
+	<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">A Quick Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periods.html">Periods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Useful Template Tags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+
+      <h3>This Page</h3>
+      <ul class="this-page-menu">
+        <li><a href="_sources/template_tags.txt"
+               rel="nofollow">Show Source</a></li>
+      </ul>
+    <div id="searchbox" style="display: none">
+      
+        <form class="search" action="search.html" method="get">
+			<div class="search-wrapper">
+			<span class="search-left"></span>
+			<input class="prettysearch" type="text" name="q" size="18" />
+			<span class="search-right">&nbsp;</span>
+			</div>
+          <input type="submit" value="Search" class="searchbutton" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+        <p class="searchtip" style="font-size: 90%">
+        Enter search terms or a module, class or function name.
+        </p>
+    </div>
+    <script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+</div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="useful-template-tags">
+<h1>Useful Template Tags<a class="headerlink" href="#useful-template-tags" title="Permalink to this headline">¶</a></h1>
+<p>All of the templatetags are located in templatetags/scheduletags.py. You can look at more of them there. I am only going to talk about a few here.</p>
+<p>To load the template tags this must be in your template</p>
+<p><tt class="docutils literal"><span class="pre">{%</span> <span class="pre">load</span> <span class="pre">scheduletags</span> <span class="pre">%}</span></tt></p>
+<div class="section" id="querystring-for-date">
+<h2><tt class="docutils literal"><span class="pre">querystring_for_date</span></tt><a class="headerlink" href="#querystring-for-date" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Usage</dt>
+<dd><tt class="docutils literal"><span class="pre">{%</span> <span class="pre">querystring_for_date</span> <span class="pre">&lt;date&gt;[</span> <span class="pre">&lt;num&gt;]</span> <span class="pre">%}</span></tt></dd>
+</dl>
+<p>This template tag produces a querystring that describes <tt class="docutils literal"><span class="pre">date</span></tt>.  It turns date into a dictionary and then turns that dictionary into a querystring, in this fashion:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2009</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">querystring_for_date</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+<span class="go">&#39;?year=2009&amp;month=4&amp;day=1&amp;hour=0&amp;minute=0&amp;second=0&#39;</span>
+</pre></div>
+</div>
+<p>This is useful when creating links as the calendar_by_period view uses this to display any date besides <tt class="docutils literal"><span class="pre">datetime.datetime.now()</span></tt>.  The <tt class="docutils literal"><span class="pre">num</span></tt> argument can be used to say how specific you want to be about the date.  If you were displaying a yearly calendar you only care about the year so <tt class="docutils literal"><span class="pre">num</span></tt> would only have to be <tt class="docutils literal"><span class="pre">1</span></tt>. See the examples below</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">querystring_for_date</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&#39;?year=2009&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Now if we only need the month</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">querystring_for_date</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">&#39;?year=2009&amp;month=4&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Now everything except the seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">querystring_for_date</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">&#39;?year=2009&amp;month=4&amp;day=1&amp;hour=0&amp;minute=0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div> 
+        </div>
+      </div>
+    <div class="footer">
+    <p>
+      &copy; Copyright 2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+	</p>
+    </div>
+      <div class="clearer"></div>
+    </div>
+	<div id="breadcrumbs">
+		Useful Template Tags
+		</ul>
+	</div>
+	<script type="text/javascript" charset="utf-8" src="_static/toc.js"></script>
+  </body>
+</html>

@@ -2,7 +2,7 @@
 Periods
 =======
 
-One of the goals of DjangoSchedule is to make occurrence generation and persistence easy.  To do this it creates simple classes for accessing these
+One of the goals of Django Events is to make occurrence generation and persistence easy.  To do this it creates simple classes for accessing these
 occurrences.  These are Periods.  Period is an object that is initiated with an iterable object of events, a start datetime, and an end datetime.
 
 It is common to subclass Period for common periods of time.  Some of these already exist in the project.  Year, Month, Week, Day

@@ -1,0 +1,256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Models &mdash; Django Events 0.6b1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6b1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Events 0.6b1 documentation" href="index.html" />
+    <link rel="next" title="Settings" href="settings.html" />
+    <link rel="prev" title="Views" href="views.html" /> 
+  </head>
+  <body>
+<div id="docstitle">
+	<p>Django Events 0.6b1 documentation</p>
+</div>
+<div id="header">
+	<div id="title"><h1>Models</h1></div>
+	<ul id="headerButtons">
+		<li id="toc_button"><div class="headerButton"><a href="#">Table of Contents</a></div></li>
+		<li id="page_buttons">
+			<div class="headerButton"><a href="genindex.html" title="General Index" accesskey="I">index</a></div>
+			<div class="headerButton"><a href="settings.html" title="Settings" accesskey="N">next</a></div>
+			<div class="headerButton"><a href="views.html" title="Views" accesskey="P">previous</a></div>
+		</li>
+	</ul>
+</div>
+
+<div id="sphinxsidebar">
+  <div class="sphinxsidebarwrapper">
+	<ul><li class="toctree-l1"><a href="index.html">Main Page</a></li></ul>
+	<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">A Quick Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periods.html">Periods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_tags.html">Useful Template Tags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+
+      <h3>This Page</h3>
+      <ul class="this-page-menu">
+        <li><a href="_sources/models.txt"
+               rel="nofollow">Show Source</a></li>
+      </ul>
+    <div id="searchbox" style="display: none">
+      
+        <form class="search" action="search.html" method="get">
+			<div class="search-wrapper">
+			<span class="search-left"></span>
+			<input class="prettysearch" type="text" name="q" size="18" />
+			<span class="search-right">&nbsp;</span>
+			</div>
+          <input type="submit" value="Search" class="searchbutton" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+        <p class="searchtip" style="font-size: 90%">
+        Enter search terms or a module, class or function name.
+        </p>
+    </div>
+    <script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+</div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="calendar">
+<h2>Calendar<a class="headerlink" href="#calendar" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Calendar">
+<em class="property">class </em><tt class="descname">Calendar</tt><a class="headerlink" href="#Calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is for grouping events so that batch relations can be made to all
+events.  An example would be a project calendar.</p>
+<dl class="attribute">
+<dt id="Calendar.name">
+<tt class="descname">name</tt><a class="headerlink" href="#Calendar.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> <tt class="docutils literal"><span class="pre">CharField(200)</span></tt></p>
+<p>The name of the calendar</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Calendar.slug">
+<tt class="descname">slug</tt><a class="headerlink" href="#Calendar.slug" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Required, Unique</strong> <tt class="docutils literal"><span class="pre">SlugField(200)</span></tt></p>
+<p>URL-friendly name. It is automatically generated from the name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Calendar.events">
+<tt class="descname">events</tt><a class="headerlink" href="#Calendar.events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all events on this calendar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Calendar.create_relation">
+<tt class="descname">create_relation</tt><big>(</big><em>obj</em>, <em>distinction=None</em>, <em>inheritable=True</em><big>)</big><a class="headerlink" href="#Calendar.create_relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#CalendarRelation" title="CalendarRelation"><tt class="xref py py-class docutils literal"><span class="pre">CalendarRelation</span></tt></a> between this calendar and obj.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>obj</strong> (<em>Model</em>) &#8211; The object to relate to this calendar</li>
+<li><strong>distinction</strong> (<em>str</em>) &#8211; A string representing a distinction of the relation, <tt class="docutils literal"><span class="pre">User</span></tt> could have a &#8216;veiwer&#8217; relation and an &#8216;owner&#8217; relation for example.</li>
+<li><strong>inheritable</strong> (<em>bool</em>) &#8211; If <tt class="docutils literal"><span class="pre">True</span></tt> this relation will cascade to all events related to this calendar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Calendar.get_recent">
+<tt class="descname">get_recent</tt><big>(</big><em>amount=5</em>, <em>in_datetime=datetime.datetime.now</em><big>)</big><a class="headerlink" href="#Calendar.get_recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>This shortcut function allows you to get events that have started recently.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>amount</strong> (<em>int</em>) &#8211; The amount of events you want in the queryset. The default is
+<tt class="docutils literal"><span class="pre">5</span></tt>.</li>
+<li><strong>in_datetime</strong> (<em>datetime</em>) &#8211; The datetime you want to check against. It defaults to <tt class="docutils literal"><span class="pre">datetime.datetime.now</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Calendar.occurences_after">
+<tt class="descname">occurences_after</tt><big>(</big><em>date=None</em><big>)</big><a class="headerlink" href="#Calendar.occurences_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the occurrences after the given date</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>datetime</em>) &#8211; The date after which you want all the occurances</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">EventListManager</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Calendar.get_absolute_url">
+<tt class="descname">get_absolute_url</tt><big>(</big><big>)</big><a class="headerlink" href="#Calendar.get_absolute_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the absolute URL for this calendar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Calendar.add_event_url">
+<tt class="descname">add_event_url</tt><big>(</big><big>)</big><a class="headerlink" href="#Calendar.add_event_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the absolute URL to add an <tt class="xref py py-class docutils literal"><span class="pre">Event</span></tt> to this <a class="reference internal" href="#Calendar" title="Calendar"><tt class="xref py py-class docutils literal"><span class="pre">Calendar</span></tt></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="calendarrelation">
+<h2>CalendarRelation<a class="headerlink" href="#calendarrelation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="CalendarRelation">
+<em class="property">class </em><tt class="descname">CalendarRelation</tt><a class="headerlink" href="#CalendarRelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is for relating data to a Calendar, and possible all of the events for that calendar, there is also a distinction, so that the same type or kind of data can be related in different ways.  A good example would be, if you have calendars that are only visible by certain users, you could create a relation between calendars and users, with the distinction of &#8216;visibility&#8217;, or &#8216;ownership&#8217;.  If inheritable is set to true, all the events for this calendar will inherit this relation.</p>
+<p>DISCLAIMER: while this model is a nice out of the box feature to have, it may not scale well.  If you use this, keep that in mind.</p>
+<dl class="attribute">
+<dt id="CalendarRelation.calendar">
+<tt class="descname">calendar</tt><a class="headerlink" href="#CalendarRelation.calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> <tt class="docutils literal"><span class="pre">ForeignKey(</span></tt> <a class="reference internal" href="#Calendar" title="Calendar"><tt class="xref py py-class docutils literal"><span class="pre">Calendar</span></tt></a> <tt class="docutils literal"><span class="pre">)</span></tt></p>
+<p>Foreign key relation to a <tt class="docutils literal"><span class="pre">Calendar</span></tt> object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="CalendarRelation.content_type">
+<tt class="descname">content_type</tt><a class="headerlink" href="#CalendarRelation.content_type" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> <tt class="docutils literal"><span class="pre">ForeignKey(</span></tt> <tt class="xref py py-class docutils literal"><span class="pre">ContentType</span></tt> <tt class="docutils literal"><span class="pre">)</span></tt></p>
+<p>Foreign key to a <tt class="docutils literal"><span class="pre">django.contrib.contenttypes.models.ContentType</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="CalendarRelation.object_id">
+<tt class="descname">object_id</tt><a class="headerlink" href="#CalendarRelation.object_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> <tt class="docutils literal"><span class="pre">IntegerField</span></tt></p>
+<p>The id of the model referenced by <a class="reference internal" href="#CalendarRelation.content_type" title="CalendarRelation.content_type"><tt class="xref py py-attr docutils literal"><span class="pre">CalendarRelation.content_type</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="CalendarRelation.content_object">
+<tt class="descname">content_object</tt><a class="headerlink" href="#CalendarRelation.content_object" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">GenericForeignKey</span></tt></p>
+<p>Direct reference to the object referenced by <a class="reference internal" href="#CalendarRelation.content_type" title="CalendarRelation.content_type"><tt class="xref py py-attr docutils literal"><span class="pre">CalendarRelation.content_type</span></tt></a> and <a class="reference internal" href="#CalendarRelation.object_id" title="CalendarRelation.object_id"><tt class="xref py py-attr docutils literal"><span class="pre">CalendarRelation.object_id</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="CalendarRelation.distinction">
+<tt class="descname">distinction</tt><a class="headerlink" href="#CalendarRelation.distinction" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">CharField(20)</span></tt></p>
+<p>A string representing a distinction of the relation. For example, a <tt class="xref py py-class docutils literal"><span class="pre">User</span></tt> could have a relation with a <tt class="docutils literal"><span class="pre">veiwer</span></tt> distinction and an <tt class="docutils literal"><span class="pre">owner</span></tt> distinction.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div> 
+        </div>
+      </div>
+    <div class="footer">
+    <p>
+      &copy; Copyright 2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+	</p>
+    </div>
+      <div class="clearer"></div>
+    </div>
+	<div id="breadcrumbs">
+		Models
+		</ul>
+	</div>
+	<script type="text/javascript" charset="utf-8" src="_static/toc.js"></script>
+  </body>
+</html>

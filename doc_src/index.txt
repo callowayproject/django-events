@@ -1,9 +1,11 @@
-.. DjangoSchedule documentation master file, created by sphinx-quickstart on Mon Mar 30 15:19:11 2009.
+=========================
+Django Events v |version|
+=========================
 
-Welcome to DjangoSchedule's documentation!
-==========================================
+Django Events is a calendaring and event management application for Django. Based on django-schedule.
 
-DjangoSchedule is an open-source calendaring application. 
+
+Goals: Relate content to calendars and events
 
 .. toctree::
     :maxdepth: 1

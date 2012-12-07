@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# DjangoSchedule documentation build configuration file, created by
-# sphinx-quickstart on Mon Mar 30 15:19:11 2009.
-#
 # This file is execfile()d with the current directory set to its containing dir.
 #
 # Note that not all possible configuration values are present in this
@@ -40,7 +37,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Django Events'
-copyright = u'2012 Calloway Project, &copy;2009, Tony Hauber, Yann Malet, Rock Howard'
+copyright = u'2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

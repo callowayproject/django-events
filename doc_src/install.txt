@@ -4,24 +4,10 @@
 Install
 =======
 
-The following quick install steps make the following assumptions about you:
+pip install django-events
 
-- You have a working understanding of `Django <https://www.djangoproject.com/>`_
-- You've setup and use `virtualenvwrapper <http://www.doughellmann.com/projects/virtualenvwrapper/>`_
+Add django-events to your INSTALLED_APPS setting
 
+Add views to your urls.py
 
-.. code-block:: bash
-
-    $ mkvirtualenv --distribute django-schedule
-    $ cd ~/Sites/
-    $ git clone git://github.com/epicserve/django-schedule.git
-    $ git co dev
-    $ add2virtualenv .
-    $ add2virtualenv example
-    $ easy_install readline
-    $ pip install -r example/config/requirements/development.txt
-    $ echo "export DJANGO_SETTINGS_MODULE=config.settings.development" >> $VIRTUAL_ENV/bin/postactivate
-    $ workon django-schedule
-    $ django-admin.py syncdb
-    $ django-admin.py load_example_data
-    $ django-admin.py runserver
+load default rules

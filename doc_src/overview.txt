@@ -22,8 +22,7 @@ Occurrences are generated programatically. This is because we can not store all 
 What is a Rule?
 ---------------
 
-A rule defines how and event will recur.  As of right now, there are no rules
-included with the app, so you will have to create your own. Doing this is somewhat straight forward
+A rule defines how and event will recur. You can load a set default rules using the ``load_default_rules`` management command: ``./manage.py load_default_rules``
 
 Accessing Occurrences with an Event
 -----------------------------------
