@@ -1,0 +1,13 @@
+.. _ref-install:
+
+=======
+Install
+=======
+
+pip install django-events
+
+Add django-events to your INSTALLED_APPS setting
+
+Add views to your urls.py
+
+load default rules

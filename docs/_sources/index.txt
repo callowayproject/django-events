@@ -1,0 +1,29 @@
+=========================
+Django Events v |version|
+=========================
+
+Django Events is a calendaring and event management application for Django. Based on django-schedule.
+
+
+Goals: Relate content to calendars and events
+
+.. toctree::
+    :maxdepth: 1
+
+    install
+    overview
+    periods
+    utils
+    template_tags
+    views
+    models
+    settings
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
