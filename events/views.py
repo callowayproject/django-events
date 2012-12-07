@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from events.conf.settings import GET_EVENTS_FUNC, OCCURRENCE_CANCEL_REDIRECT
 from events.forms import EventForm, OccurrenceForm
 from events.forms import EventBackendForm, OccurrenceBackendForm
-from events.models import *
+from events.models import Event, EventRelation, Occurrence, Calendar
 from events.periods import weekday_names
 from events.utils import check_event_permissions, coerce_date_dict
 from events.utils import decode_occurrence
@@ -240,6 +240,8 @@ def create_or_edit_event(request, calendar_slug, event_id=None, next=None,
     # If the key word argument redirect is set
     # Lastly redirect to the event detail of the recently create event
     """
+    from .forms import EventRelationFormSet
+
     date = coerce_date_dict(request.GET)
     initial_data = None
     if date:
@@ -262,21 +264,25 @@ def create_or_edit_event(request, calendar_slug, event_id=None, next=None,
 
     form = form_class(data=request.POST or None, instance=instance,
         hour24=True, initial=initial_data)
-
+    eventrelation_formset = None
     if form.is_valid():
         event = form.save(commit=False)
         if instance is None:
             event.creator = request.user
             event.calendar = calendar
-        event.save()
-        next = next or reverse('event', args=[event.id])
-        next = get_next_url(request, next)
-        return HttpResponseRedirect(next)
+        eventrelation_formset = EventRelationFormSet(request.POST, instance=event)
+        if eventrelation_formset.is_valid():
+            event.save()
+            eventrelation_formset.save()
+            next = next or reverse('event', args=[event.id])
+            next = get_next_url(request, next)
+            return HttpResponseRedirect(next)
 
     next = get_next_url(request, next)
     return render_to_response(template_name, {
         "form": form,
         "calendar": calendar,
+        "relation_formset": eventrelation_formset or EventRelationFormSet(instance=instance),
         "next": next
     }, context_instance=RequestContext(request))
 

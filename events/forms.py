@@ -1,6 +1,9 @@
 from django import forms
+from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
-from events.models import Event, Occurrence
+from events.models import Event, EventRelation, Occurrence
+
+EventRelationFormSet = inlineformset_factory(Event, EventRelation)
 
 
 class SpanForm(forms.ModelForm):
