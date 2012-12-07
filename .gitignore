@@ -2,7 +2,7 @@
 *~
 *.pyc
 dev.db
-django_schedule.egg-info
+*.egg-info
 /coverage
 chromedriver.log
 build/
@@ -14,3 +14,8 @@ doc_src/_build
 MANIFEST
 dist/
 example/media/
+local_settings.py
+docs/_build/
+src/
+pip-log.txt
+.buildinfo
