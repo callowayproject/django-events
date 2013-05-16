@@ -48,6 +48,11 @@ url(r'^calendar/(?P<calendar_slug>[-\w]+)/$',
     name="calendar_home",
     ),
 
+url(r'^calendar/(?P<calendar_slug>[-\w]+)/events/$',
+    'events.views.calendar_events',
+    name="calendar_events",
+    ),
+
 #Event Urls
 url(r'^event/create/(?P<calendar_slug>[-\w]+)/$',
     'events.views.create_or_edit_event',

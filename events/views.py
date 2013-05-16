@@ -11,10 +11,11 @@ from events.conf.settings import GET_EVENTS_FUNC, OCCURRENCE_CANCEL_REDIRECT
 from events.forms import EventForm, OccurrenceForm
 from events.forms import EventBackendForm, OccurrenceBackendForm
 from events.models import Event, EventRelation, Occurrence, Calendar
-from events.periods import weekday_names
+from events.periods import weekday_names, Period
 from events.utils import check_event_permissions, coerce_date_dict
 from events.utils import decode_occurrence
 import datetime
+import simplejson
 
 
 def calendar(request, calendar_slug, template='events/calendar.html'):
@@ -90,6 +91,46 @@ def calendar_by_periods(request, calendar_slug, periods=None,
             'weekday_names': weekday_names,
             'here': quote(request.get_full_path()),
         }, context_instance=RequestContext(request),)
+
+
+def calendar_events(request, calendar_slug):
+    """
+    JSON events feed class conforming to the JQuery FullCalendar and
+    jquery-week-calendar CalEvent standard.
+
+    [1]: http://code.google.com/p/jquery-week-calendar/
+    [2]: http://arshaw.com/fullcalendar
+    """
+    calendar = get_object_or_404(Calendar, slug=calendar_slug)
+
+    start = request.GET.get('start', None)
+    start = start and datetime.datetime.fromtimestamp(int(start))
+    end = request.GET.get('end', None)
+    end = end and datetime.datetime.fromtimestamp(int(end))
+
+     # Corresponds to: http://arshaw.com/fullcalendar/docs/#calevent-objects
+    CALEVENT_ITEMS = (
+        ('id', 'id'),
+        ('start', 'start'),
+        ('end', 'end'),
+        ('title', 'summary')
+    )
+
+    events = GET_EVENTS_FUNC(request, calendar)
+    period = Period(events, start, end)
+    cal_events = []
+    for o in period.get_occurrences():
+        start = o.start.isoformat()
+        end = o.end.isoformat()
+        cal_event = {'id': o.event.pk, 'start': start, 'end': end, 'title': o.title}
+        cal_events.append(cal_event)
+
+    json_cal_events = simplejson.dumps(cal_events, ensure_ascii=False)
+
+    response = HttpResponse(json_cal_events)
+    response['Content-Type'] = 'application/json'
+
+    return response
 
 
 def event(request, event_id, template_name="events/event.html"):
