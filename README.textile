@@ -22,7 +22,7 @@ h2. Settings.py
 
 h3. REQUIRED
 
-INSTALLED_APPS - add: 
+INSTALLED_APPS - add:
     'schedule'
 
 TEMPLATE_CONTEXT_PROCESSORS - add:
@@ -46,7 +46,7 @@ Defaults to False
 
 CHECK_PERMISSION_FUNC
 
-This setting controls the callable used to determine if a user has permission to edit an event or occurance. The callable must take the object and the user and return a boolean. 
+This setting controls the callable used to determine if a user has permission to edit an event or occurance. The callable must take the object and the user and return a boolean.
 
 Default:
 <pre>
@@ -63,5 +63,5 @@ This setting controls the callable that gets all events for calendar display. Th
 Default:
 <pre>
     get_events(request, calendar):
-        return calendar.event_set.all()
+        return calendar.events.all()
 </pre>

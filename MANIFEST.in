@@ -1,5 +1,5 @@
 recursive-include docs *
 recursive-include events/templates *
-recursive-include events/conf *
 recursive-include events/fixtures *.json
-recursive-include example *
+recursive-include events/locale *
+prune example

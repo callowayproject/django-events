@@ -39,7 +39,7 @@ if not CHECK_PERMISSION_FUNC:
 GET_EVENTS_FUNC = getattr(settings, 'GET_EVENTS_FUNC', None)
 if not GET_EVENTS_FUNC:
     def get_events(request, calendar):
-        return calendar.event_set.all()
+        return calendar.events.all()
 
     GET_EVENTS_FUNC = get_events
 
