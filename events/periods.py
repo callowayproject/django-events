@@ -1,9 +1,8 @@
 import datetime
 from django.utils import timezone as tz
 from django.conf import settings
-from django.template.defaultfilters import date
 from django.utils.dates import WEEKDAYS, WEEKDAYS_ABBR
-from events.conf.settings import FIRST_DAY_OF_WEEK, SHOW_CANCELLED_OCCURRENCES
+from events.settings import FIRST_DAY_OF_WEEK, SHOW_CANCELLED_OCCURRENCES
 from events.models import Occurrence
 
 weekday_names = []
@@ -46,7 +45,7 @@ class Period(object):
         occurrences = []
         if hasattr(self, "occurrence_pool") and self.occurrence_pool is not None:
             for occurrence in self.occurrence_pool:
-                if occurrence.start <= self.end and occurrence.end >= self.start:
+                if occurrence.start < self.end and occurrence.end > self.start:
                     occurrences.append(occurrence)
             return occurrences
 
@@ -151,7 +150,9 @@ class Period(object):
 
     def get_time_slot(self, start, end, occurrence_pool=None):
         if start >= self.start and end <= self.end:
-            return Period(self.events, start, end, occurrence_pool=occurrence_pool)
+            return Period(self.events, start, end,
+                parent_persisted_occurrences=self.get_persisted_occurrences(),
+                occurrence_pool=self.occurrences)
         return None
 
     def create_sub_period(self, cls, start=None, occurrence_pool=None):
@@ -184,15 +185,15 @@ class Year(Period):
     next = next_year
 
     def prev_year(self):
-        start = datetime.datetime(self.start.year - 1, self.start.month, self.start.day)
+        start = datetime.datetime(self.start.year - 1, self.start.month, self.start.day, tzinfo=tz.utc)
         return Year(self.events, start)
     prev = prev_year
 
     def _get_year_range(self, year):
         start = datetime.datetime(year.year, datetime.datetime.min.month,
-            datetime.datetime.min.day)
+            datetime.datetime.min.day, tzinfo=tz.utc)
         end = datetime.datetime(year.year + 1, datetime.datetime.min.month,
-            datetime.datetime.min.day)
+            datetime.datetime.min.day, tzinfo=tz.utc)
         return start, end
 
     def __unicode__(self):
@@ -236,17 +237,17 @@ class Month(Period):
         return Year(self.events, self.start)
 
     def prev_year(self):
-        start = datetime.datetime.min.replace(year=self.start.year - 1)
+        start = datetime.datetime.min.replace(year=self.start.year - 1, tzinfo=tz.utc)
         return Year(self.events, start)
 
     def next_year(self):
-        start = datetime.datetime.min.replace(year=self.start.year + 1)
+        start = datetime.datetime.min.replace(year=self.start.year + 1, tzinfo=tz.utc)
         return Year(self.events, start)
 
     def _get_month_range(self, month):
         year = month.year
         month = month.month
-        start = datetime.datetime.min.replace(year=year, month=month)
+        start = datetime.datetime.min.replace(year=year, month=month, tzinfo=tz.utc)
         if month == 12:
             end = start.replace(month=1, year=year + 1)
         else:
@@ -303,7 +304,7 @@ class Week(Period):
         if isinstance(week, datetime.datetime):
             week = week.date()
         # Adjust the start datetime to midnight of the week datetime
-        start = datetime.datetime.combine(week, datetime.time.min)
+        start = datetime.datetime.combine(week, datetime.time.min.replace(tzinfo=tz.utc))
         # Adjust the start datetime to Monday or Sunday of the current week
         sub_days = 0
         if FIRST_DAY_OF_WEEK == 1:
@@ -320,6 +321,7 @@ class Week(Period):
         return start, end
 
     def __unicode__(self):
+        from django.template.defaultfilters import date
         return "%s - %s" % (date(self.start, settings.DATE_FORMAT), date(self.end, settings.DATE_FORMAT))
 
 
@@ -346,7 +348,13 @@ class Day(Period):
             return False
 
     def __unicode__(self):
+        from django.template.defaultfilters import date
         return date(self.start, "l, %s" % settings.DATE_FORMAT)
+
+    def is_past(self):
+        date = datetime.datetime.now()
+        start = datetime.datetime.combine(date.date(), datetime.time.min)
+        return self.start < start
 
     def prev_day(self):
         return Day(self.events, self.start - datetime.timedelta(days=1))
