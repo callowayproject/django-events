@@ -5,21 +5,20 @@ from django.utils import timezone as tz
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.db.models import Q
-from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.template.defaultfilters import date
+from django.template.defaultfilters import date, urlencode
 from django.utils.translation import ugettext, ugettext_lazy as _
-import datetime
 from dateutil import rrule
 from .rules import Rule
 from .calendars import Calendar
 from ..utils import OccurrenceReplacer
 
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
+
 
 class EventManager(models.Manager):
-
     def get_for_object(self, content_object, distinction=None, inherit=True):
         return EventRelation.objects.get_events_for_object(content_object, distinction, inherit)
 
@@ -34,17 +33,25 @@ class Event(models.Model):
     all_day = models.BooleanField()
     title = models.CharField(_("title"), max_length=255)
     description = models.TextField(_("description"), null=True, blank=True)
-    creator = models.ForeignKey(User, null=True, verbose_name=_("creator"))
-    created_on = models.DateTimeField(_("created on"), default=datetime.datetime.now)
-    rule = models.ForeignKey(Rule, null=True, blank=True, verbose_name=_("Repeats"), help_text=_("Select '----' for a one time only event."))
-    end_recurring_period = models.DateTimeField(_("Ends on"), null=True, blank=True, help_text=_("This date is ignored for one time only events."))
-    calendar = models.ForeignKey(Calendar, blank=True)
+    creator = models.ForeignKey(AUTH_USER_MODEL, null=True, verbose_name=_("creator"))
+    created_on = models.DateTimeField(_("created on"), default=tz.now)
+    rule = models.ForeignKey(Rule,
+        null=True, blank=True,
+        verbose_name=_("Repeats"),
+        help_text=_("Select '----' for a one time only event."),
+        related_name="events")
+    end_recurring_period = models.DateTimeField(_("Ends on"),
+        null=True, blank=True,
+        help_text=_("This date is ignored for one time only events."))
+    calendar = models.ForeignKey(Calendar,
+        related_name="events")
     objects = EventManager()
 
     class Meta:
         verbose_name = _('event')
         verbose_name_plural = _('events')
         app_label = 'events'
+        get_latest_by = 'start'
 
     def __unicode__(self):
         date_format = u'l, %s' % settings.DATE_FORMAT
@@ -55,12 +62,10 @@ class Event(models.Model):
         }
 
     def save(self, *args, **kwargs):
-
         # if the event is an all day event then make sure it has the right start and end times
         if self.all_day == True:
             self.start = datetime.datetime.combine(self.start, datetime.time.min)
             self.end = datetime.datetime.combine(self.end, datetime.time.max)
-
         super(Event, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -113,8 +118,8 @@ class Event(models.Model):
     def get_rrule_object(self):
         if self.rule is not None:
             params = self.rule.get_params()
-            frequency = 'rrule.%s' % self.rule.frequency
-            return rrule.rrule(eval(frequency), dtstart=self.start, **params)
+            frequency = rrule.__dict__[self.rule.frequency]
+            return rrule.rrule(frequency, dtstart=self.start, **params)
 
     def _create_occurrence(self, start, end=None):
         if end is None:
@@ -367,6 +372,7 @@ class Occurrence(models.Model):
     original_end = models.DateTimeField(_("original end"))
 
     class Meta:
+        ordering = ('start', )
         verbose_name = _("occurrence")
         verbose_name_plural = _("occurrences")
         app_label = 'events'
@@ -437,6 +443,30 @@ class Occurrence(models.Model):
             'second': self.start.second,
         })
 
+    def ics_url(self):
+        """
+        Needs to be fully-qualified (for sending to calendar apps). Your app needs to define
+        an 'ics_for_occurrence' url, and properties for populating an ics for each event
+        (see OccurrenceModel.as_icalendar)
+        """
+        current_site = Site.objects.get_current()
+        return 'http://' + current_site.domain + reverse("event_ical", args=[
+                self.event.pk,
+                self.start.year,
+                self.start.month,
+                self.start.day,
+                self.start.hour,
+                self.start.minute,
+                ])
+
+    def webcal_url(self):
+        return self.ics_url()\
+            .replace("http://", "webcal://")\
+            .replace("https://", "webcal://")
+
+    def gcal_url(self):
+        return "http://www.google.com/calendar/render?cid=%s" % urlencode(self.ics_url())
+
     def __unicode__(self):
         return ugettext("%(start)s to %(end)s") % {
             'start': self.start,
@@ -450,4 +480,6 @@ class Occurrence(models.Model):
         return rank
 
     def __eq__(self, other):
+        if not hasattr(other, 'event'):
+            return False
         return self.event == other.event and self.original_start == other.original_start and self.original_end == other.original_end

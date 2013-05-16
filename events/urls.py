@@ -109,6 +109,6 @@ url(r'^event_json/$',
     'events.views.event_json',
     name="event_json"),
 
- url(r'$', ListView.as_view(queryset=Calendar.objects.all()), name='events'),
+ url(r'^$', ListView.as_view(queryset=Calendar.objects.all()), name='events'),
 
 )
