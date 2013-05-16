@@ -7,15 +7,15 @@ from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.template import RequestContext
 from django.template import Context, loader
 from django.core.urlresolvers import reverse
-from events.conf.settings import GET_EVENTS_FUNC, OCCURRENCE_CANCEL_REDIRECT
+from events.settings import GET_EVENTS_FUNC, OCCURRENCE_CANCEL_REDIRECT
 from events.forms import EventForm, OccurrenceForm
 from events.forms import EventBackendForm, OccurrenceBackendForm
-from events.models import Event, EventRelation, Occurrence, Calendar
+from events.models import Event, Occurrence, Calendar
 from events.periods import weekday_names, Period
 from events.utils import check_event_permissions, coerce_date_dict
 from events.utils import decode_occurrence
 import datetime
-import simplejson
+import json
 
 
 def calendar(request, calendar_slug, template='events/calendar.html'):
@@ -125,7 +125,7 @@ def calendar_events(request, calendar_slug):
         cal_event = {'id': o.event.pk, 'start': start, 'end': end, 'title': o.title}
         cal_events.append(cal_event)
 
-    json_cal_events = simplejson.dumps(cal_events, ensure_ascii=False)
+    json_cal_events = json.dumps(cal_events, ensure_ascii=False)
 
     response = HttpResponse(json_cal_events)
     response['Content-Type'] = 'application/json'

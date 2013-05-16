@@ -145,6 +145,7 @@ class Event(models.Model):
         difference = (self.end - self.start)
         if self.rule is not None:
             occurrences = []
+            per = self.end_recurring_period
             if self.end_recurring_period and self.end_recurring_period < end:
                 end = self.end_recurring_period
             rule = self.get_rrule_object()
