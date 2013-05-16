@@ -6,7 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
-import datetime
+from django.utils import timezone as tz
+
 from ..utils import EventListManager
 
 
@@ -58,7 +59,7 @@ class CalendarManager(models.Manager):
         if len(calendar_list) == 0:
             raise Calendar.DoesNotExist, "Calendar does not exist."
         elif len(calendar_list) > 1:
-            raise AssertionError, "More than one calendars were found."
+            raise AssertionError("More than one calendar were found.")
         else:
             return calendar_list[0]
 
@@ -144,10 +145,6 @@ class Calendar(models.Model):
     def __unicode__(self):
         return self.name
 
-    def events(self):
-        return self.event_set.all()
-    events = property(events)
-
     def create_relation(self, obj, distinction=None, inheritable=True):
         """
         Creates a CalendarRelation between self and obj.
@@ -157,7 +154,7 @@ class Calendar(models.Model):
         """
         CalendarRelation.objects.create_relation(self, obj, distinction, inheritable)
 
-    def get_recent(self, amount=5, in_datetime=datetime.datetime.now):
+    def get_recent(self, amount=5, in_datetime=tz.now):
         """
         This shortcut function allows you to get events that have started
         recently.
@@ -168,7 +165,7 @@ class Calendar(models.Model):
         in_datetime is the datetime you want to check against.  It defaults to
         datetime.datetime.now
         """
-        return self.events.order_by('-start').filter(start__lt=datetime.datetime.now())[:amount]
+        return self.events.order_by('-start').filter(start__lt=tz.now())[:amount]
 
     def occurrences_after(self, date=None):
         return EventListManager(self.events.all()).occurrences_after(date)

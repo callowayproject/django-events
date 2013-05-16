@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import datetime
+from django.conf import settings
+from django.utils import timezone as tz
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.db.models import Q
@@ -159,7 +162,7 @@ class Event(models.Model):
         """
 
         if after is None:
-            after = datetime.datetime.now()
+            after = tz.now()
         rule = self.get_rrule_object()
         if rule is None:
             if self.end > after:

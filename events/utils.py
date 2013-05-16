@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone as tz
 import heapq
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
@@ -25,7 +25,7 @@ class EventListManager(object):
         """
         from events.models import Occurrence
         if after is None:
-            after = datetime.datetime.now()
+            after = tz.now()
         occ_replacer = OccurrenceReplacer(
             Occurrence.objects.filter(event__in=self.events))
         generators = [event._occurrences_after_generator(after) for event in self.events]
@@ -115,7 +115,8 @@ def coerce_date_dict(date_dict):
                 'day': 1,
                 'hour': 0,
                 'minute': 0,
-                'second': 0}
+                'second': 0,
+                'tzinfo': tz.utc}
     modified = False
     for key in keys:
         try:

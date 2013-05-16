@@ -1,4 +1,5 @@
 import datetime
+from django.utils import timezone as tz
 from django.conf import settings
 from django.template.defaultfilters import date
 from django.utils.dates import WEEKDAYS, WEEKDAYS_ABBR
@@ -171,7 +172,7 @@ class Period(object):
 class Year(Period):
     def __init__(self, events, date=None, parent_persisted_occurrences=None):
         if date is None:
-            date = datetime.datetime.now()
+            date = tz.now()
         start, end = self._get_year_range(date)
         super(Year, self).__init__(events, start, end, parent_persisted_occurrences)
 
@@ -206,7 +207,7 @@ class Month(Period):
     def __init__(self, events, date=None, parent_persisted_occurrences=None, occurrence_pool=None):
 
         if not date:
-            date = datetime.datetime.now()
+            date = tz.now()
         start, end = self._get_month_range(date)
         super(Month, self).__init__(events, start, end, parent_persisted_occurrences, occurrence_pool)
 
@@ -270,7 +271,7 @@ class Week(Period):
     def __init__(self, events, date=None, parent_persisted_occurrences=None, occurrence_pool=None):
 
         if date is None:
-            date = datetime.datetime.now()
+            date = tz.now()
         start, end = self._get_week_range(date)
         super(Week, self).__init__(events, start, end, parent_persisted_occurrences, occurrence_pool)
 
@@ -327,14 +328,14 @@ class Day(Period):
     def __init__(self, events, date=None, parent_persisted_occurrences=None, occurrence_pool=None):
 
         if date is None:
-            date = datetime.datetime.now()
+            date = tz.now()
         start, end = self._get_day_range(date)
         super(Day, self).__init__(events, start, end, parent_persisted_occurrences, occurrence_pool)
 
     def _get_day_range(self, date):
         if isinstance(date, datetime.datetime):
             date = date.date()
-        start = datetime.datetime.combine(date, datetime.time.min)
+        start = datetime.datetime.combine(date, datetime.time.min.replace(tzinfo=tz.utc))
         end = start + datetime.timedelta(days=1)
         return start, end
 

@@ -29,7 +29,7 @@
 #
 
 from xml.sax.saxutils import XMLGenerator
-from datetime import datetime
+from django.utils import timezone as tz
 import re
 
 
@@ -215,7 +215,7 @@ class AtomFeed(object):
             updates.sort()
             return updates[-1]
         else:
-            return datetime.now()  # @@@ really we should allow a feed to define its "start" for this case
+            return tz.now()  # @@@ really we should allow a feed to define its "start" for this case
 
     def write_text_construct(self, handler, element_name, data):
         if isinstance(data, tuple):
@@ -467,7 +467,7 @@ class LegacySyndicationFeed(AtomFeed):
         subtitle = subtitle
         author_dict = {'name': author_name}
         if author_link:
-            author_dict['uri'] = author_uri
+            author_dict['uri'] = author_link
         if author_email:
             author_dict['email'] = author_email
         authors = [author_dict]
@@ -506,7 +506,7 @@ class LegacySyndicationFeed(AtomFeed):
             summary = None
         author_dict = {'name': author_name}
         if author_link:
-            author_dict['uri'] = author_uri
+            author_dict['uri'] = author_link
         if author_email:
             author_dict['email'] = author_email
         authors = [author_dict]
