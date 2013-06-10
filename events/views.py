@@ -490,7 +490,6 @@ def calendar_events(request, calendar_slug):
         }
         cal_events.append(cal_event)
     json_cal_events = json.dumps(cal_events, ensure_ascii=False)
-    print json_cal_events
     response = HttpResponse(json_cal_events)
     response['Content-Type'] = 'application/json'
 

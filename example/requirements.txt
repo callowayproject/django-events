@@ -5,5 +5,6 @@ South
 django-bootstrap-form
 psycopg2
 python-dateutil
+vobject
 
 -r ../requirements.txt
