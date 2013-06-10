@@ -7,7 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
 
     url(r'^$', TemplateView.as_view(template_name='homepage.html')),
-
+    (r'^admin/events/calendarview/$', 'events.views.admin_calendar_view'),
     (r'^accounts/signin/$', 'django.contrib.auth.views.login', {'template_name': 'signin.html'}, 'signin'),
     (r'^accounts/signout/$', 'django.contrib.auth.views.logout_then_login', {'login_url': '/accounts/signin/?signout=True'}, 'signout'),
 

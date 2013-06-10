@@ -1,0 +1,5 @@
+Django==1.5.1
+Pillow
+gunicorn==0.17.0
+
+-r ../requirements.txt

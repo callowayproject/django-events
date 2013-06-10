@@ -1,0 +1,12 @@
+import os, sys, site
+import django.core.handlers.wsgi
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, PROJECT_ROOT)
+
+site.addsitedir(os.path.join(PROJECT_ROOT, 'virtualenv', 'lib', 'python2.7', 'site-packages'))
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+sys.stdout = sys.stderr
+application = django.core.handlers.wsgi.WSGIHandler()
