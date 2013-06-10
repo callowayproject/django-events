@@ -2,5 +2,6 @@ Django==1.5.1
 Pillow
 gunicorn==0.17.0
 South
+django-bootstrap-form
 
 -r ../requirements.txt
