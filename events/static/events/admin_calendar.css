@@ -1,0 +1,37 @@
+#calendar_sidebar {
+    width: 200px;
+    font-size: 12px;
+    float: left;
+}
+#calendar_sidebar .ui-widget-header, .ui-widget-content .ui-state-default {
+    border: 0;
+    background: none
+}
+#calendar_sidebar .ui-widget-content .ui-state-highlight {
+    background: #c1c1c1;
+    border: 0;
+}
+#calendar_sidebar .ui-widget-content .ui-state-active {
+    background: #a7caff;
+}
+#calendar_sidebar .ui-widget-content .ui-datepicker-today .ui-state-highlight,
+#calendar_sidebar .ui-widget-content .ui-datepicker-today.ui-state-highlight {
+    background: #ffffdc;
+}
+#calendar {
+    margin-left: 220px;
+}
+.ui-datepicker {
+    width: auto;
+}
+
+ul.item-list {
+    margin-left: 0;
+}
+.item-list li {
+    list-style: none;
+}
+
+.fc-content {
+    clear: inherit;
+}

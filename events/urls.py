@@ -114,6 +114,10 @@ url(r'^event_json/$',
     'events.views.event_json',
     name="event_json"),
 
+url(r'^calendars/$',
+    'events.views.calendar_list',
+    name="ajax_calendar_list"),
+
  url(r'^$', ListView.as_view(queryset=Calendar.objects.all()), name='events'),
 
 )

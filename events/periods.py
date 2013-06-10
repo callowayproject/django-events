@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.dates import WEEKDAYS, WEEKDAYS_ABBR
 from events.settings import FIRST_DAY_OF_WEEK, SHOW_CANCELLED_OCCURRENCES
 from events.models import Occurrence
+from dateutil.tz import tzutc
 
 weekday_names = []
 weekday_abbrs = []
@@ -28,8 +29,8 @@ class Period(object):
     '''
     def __init__(self, events, start, end, parent_persisted_occurrences=None,
         occurrence_pool=None):
-        self.start = start
-        self.end = end
+        self.start = start or datetime.datetime.now(tzutc())
+        self.end = end or self.start + datetime.timedelta(days=30)
         self.events = events
         self.occurrence_pool = occurrence_pool
         if parent_persisted_occurrences is not None:
@@ -51,6 +52,8 @@ class Period(object):
 
         if hasattr(self.events, 'prefetch_related'):
             self.events = self.events.select_related('calendar').prefetch_related('rule', 'occurrence_set')
+        start = self.start
+        end = self.end
         for event in self.events:
             event_occurrences = event.get_occurrences(self.start, self.end)
             occurrences += event_occurrences

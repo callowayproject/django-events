@@ -17,6 +17,16 @@ class SpanForm(forms.ModelForm):
         return self.cleaned_data
 
 
+class EventAdminForm(forms.ModelForm):
+    def clean(self):
+        if not self.cleaned_data['all_day'] and self.cleaned_data['end'] <= self.cleaned_data['start']:
+            self._errors["end"] = self.error_class(["The end time must be later than start time."])
+        return self.cleaned_data
+
+    class Meta:
+        model = Event
+
+
 class EventForm(SpanForm):
     def __init__(self, hour24=False, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
