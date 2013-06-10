@@ -13,7 +13,7 @@ import datetime
 
 DEPLOY_ROOT = '/home/natgeo/sites/'
 env.site_root = "%seducation/" % DEPLOY_ROOT
-env.repo_url = "github.com:callowayproject/django-events.git"
+env.repo_url = "git@github.com:callowayproject/django-events.git"
 
 TEST_HOST = "natgeo@67.43.4.153"
 PROD_HOST = ["natgeo@67.43.4.34"]
@@ -42,7 +42,7 @@ def push_key(key_file='~/.ssh/id_rsa.pub'):
 
 
 @hosts(TEST_HOST)
-def make_test_instance(branchname, instance_name="events"):
+def make_test_instance(branchname, instance_name="schedule"):
     """
     Make a stand-alone instance with name of branchname on the test server
     """
@@ -211,7 +211,7 @@ def bootstrap(tag, settings='production'):
     with cd(deploy_dir):
         run("python bootstrap.py")
         with prefix('source %s/bin/activate' % virtualenv):
-            run("./manage.py collectstatic --noinput --verbosity 0 --settings settings.%s" % settings)
+            run("./manage.py collectstatic --noinput --verbosity 0")
             run("./manage.py syncdb")
             # run("./manage.py migrate --delete-ghost-migrations")
 
