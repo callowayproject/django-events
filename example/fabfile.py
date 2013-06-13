@@ -173,33 +173,6 @@ def update_test(test_name):
             reload_test(test_name)
 
 
-@runs_once
-def make_tag(tag):
-    """
-    Create a tag in the local repository and push it to origin
-    """
-    local('git tag %s;git push --tags' % tag)
-
-
-def activate_tag(tag):
-    """
-    Activate the given tag
-    """
-    cur_deploy_link = "%scurrent_deploy" % env.site_root
-    cur_deploy_path = "%s%s" % (env.site_root, tag)
-    nginx_conf_link = "/etc/nginx/sites-available/education"
-    nginx_conf_path = "%s/conf/nginx.conf" % cur_deploy_link
-    upstart_link = "/etc/init/education"
-    upstart_path = "%s/conf/upstart.conf" % cur_deploy_link
-    run('rm -f %s' % cur_deploy_link)
-    run('ln -s %s %s' % (cur_deploy_path, cur_deploy_link))
-    sudo("[ ! -L %s ] && ln -s %s %s" % (nginx_conf_link, nginx_conf_path, nginx_conf_link))
-    sudo("[ ! -L %s ] && ln -s %s %s" % (upstart_link, upstart_path, upstart_link))
-    if not exists("/etc/nginx/sites-enabled/education"):
-        sudo("nxensite education")
-    sudo('restart education')
-
-
 def bootstrap(tag, settings='production'):
     """
     Bootstrap a deployment. Useful if something fails, or if you just want to.
@@ -216,42 +189,3 @@ def bootstrap(tag, settings='production'):
             # run("./manage.py migrate --delete-ghost-migrations")
 
 
-def deploy_updateable(tag):
-    """
-    Deploy a checkout of the repository.
-    """
-    deploy_dir = "%s%s" % (env.site_root, tag)
-    if exists(deploy_dir):
-        print "%s is already deployed." % tag
-        return
-    with cd(env.site_root):
-        run('git clone %s %s' % (env.repo_url, tag))
-    with cd(deploy_dir):
-        run('git checkout %s' % tag)
-    bootstrap(tag)
-
-
-@hosts(PROD_HOST)
-def update(tag=None):
-    """
-    Update the current_deploy to tag
-    """
-    deploy_dir = "%scurrent_deploy" % env.site_root
-    virtualenv = "%s/virtualenv" % deploy_dir
-    if tag is None and not env.get('tag', False):
-        tag = datetime.datetime.now().strftime("D%Y%m%d%H%M")
-        env.tag = tag
-        make_tag(tag)
-
-    with cd(deploy_dir):
-        run('git fetch --tags')
-        run('git reset --hard HEAD')
-        run('git checkout %s' % tag)
-
-        with prefix('source %s/bin/activate' % virtualenv):
-            run("pip install -r requirements.txt")
-            run("./manage.py collectstatic --noinput --verbosity 0 --settings settings.production")
-            run("./manage.py syncdb --settings settings.production")
-            run("./manage.py migrate --delete-ghost-migrations --settings settings.production")
-            run("./manage.py compress --settings settings.production --force -v 0")
-            sudo("restart education")
