@@ -42,7 +42,7 @@ setup(
                  'Operating System :: OS Independent',
                  'Programming Language :: Python',
                  'Topic :: Utilities'],
-    install_requires=['setuptools', 'vobject', 'python-dateutil'],
+    install_requires=['setuptools', 'vobject', 'python-dateutil', 'django-admin-views'],
     license='BSD',
     test_suite="events.tests",
 )

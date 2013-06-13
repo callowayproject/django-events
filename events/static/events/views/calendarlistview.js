@@ -31,7 +31,10 @@ app.CalendarListView = Backbone.View.extend({
         this.collection.each(this.appendItem, this);
     },
     appendItem: function(item) {
-        item.set({'color': this.colorPalette[this.index++]});
+        item.set({
+            'className': "cal" + this.index,
+            'color': this.colorPalette[this.index++]
+        });
         var calendarView = new app.CalendarView({
             model: item
         });

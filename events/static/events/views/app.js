@@ -51,16 +51,25 @@ app.AppView = Backbone.View.extend({
         return output;
     },
     eventClick: function(event, jsEvent, view) {
-        if (event.edit_url) {
-            if (event.edit_url.search(/\?/) >= 0) {
-                href = event.edit_url + '&_popup=1';
-            } else {
-                href = event.edit_url + '?_popup=1';
-            }
-            var win = window.open(href, name, 'height=800,width=800,resizable=yes,scrollbars=yes');
-            win.focus();
-            return false;
-        }
+        var eventview = new app.EventView({model: new app.Event(event)});
+        $(jsEvent.currentTarget).tooltipster({
+            content: eventview.render().el.outerHTML,
+            position: 'left',
+            trigger: 'click',
+            theme: event.source.className[0],
+            interactive: true
+        });
+        $(jsEvent.currentTarget).tooltipster('show');
+        // if (event.edit_url) {
+        //     if (event.edit_url.search(/\?/) >= 0) {
+        //         href = event.edit_url + '&_popup=1';
+        //     } else {
+        //         href = event.edit_url + '?_popup=1';
+        //     }
+        //     var win = window.open(href, name, 'height=800,width=800,resizable=yes,scrollbars=yes');
+        //     win.focus();
+        //     return false;
+        // }
     },
     eventResizeOrDrop: function(event) {
         // for handling both eventResize and eventDrop callbacks

@@ -119,6 +119,8 @@ THIRDPARTY_APPS = (
 PROJECT_APPS = (
     'events',
     'gunicorn',
+    'quotes',
+    'admin_views',
 )
 
 BASE_APPS = DJANGO_APPS + THIRDPARTY_APPS

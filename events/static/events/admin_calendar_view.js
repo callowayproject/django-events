@@ -58,7 +58,6 @@ $(function(){
             _.bindAll(this, 'render', 'toggle');
         },
         render: function() {
-            console.dir(this.el);
             $(this.el).html('<input type="checkbox" name="' +
                 $this.model.get('slug') + '" id="id_' +
                 $this.model.get('slug') + '" /><label for="id_' +
@@ -85,9 +84,7 @@ $(function(){
         },
         render: function() {
             var self = this;
-            console.log(this.collection.length);
             _(this.collection.models).each(function(item){
-                console.log(item);
                 self.appendItem(item);
             });
         },

@@ -482,11 +482,13 @@ def calendar_events(request, calendar_slug):
             'start': start,
             'end': end,
             'title': o.title,
+            'description': o.description,
             'edit_url': reverse('admin:events_event_change', args=(o.event.pk, )),
             'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}),
             'update_occurrence_url': reverse('ajax_edit_occurrence_by_code'),
             'repeating_id': o.event.rule_id,
-            'repeating_name': o.event.rule.name
+            'repeating_name': getattr(o.event.rule, "name", ""),
+            'repeats': o.event.rule != None,
         }
         cal_events.append(cal_event)
     json_cal_events = json.dumps(cal_events, ensure_ascii=False)

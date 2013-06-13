@@ -11,10 +11,13 @@
     <link href='{% static "fullcalendar/fullcalendar.css" %}' rel='stylesheet' />
     <link href='{% static "fullcalendar/fullcalendar.print.css" %}' rel='stylesheet' media='print' />
     <link rel='stylesheet' href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-    <link rel='stylesheet' type='text/css' href='{% static "events/admin_calendar.css" %}' />
+    <link rel='stylesheet' href='{% static "tooltipster/css/tooltipster.css" %}' />
+    <link rel='stylesheet' href='{% static "events/admin_calendar.css" %}' />
+
     <script src='{% static "jquery/jquery-1.9.1.min.js" %}'></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src='{% static "fullcalendar/fullcalendar.js" %}'></script>
+    <script src='{% static "tooltipster/js/jquery.tooltipster.min.js" %}'></script>
     <script src='{% static "events/underscore-min.js" %}'></script>
     <script src='{% static "events/backbone-min.js" %}'></script>
 
@@ -23,6 +26,7 @@
     <script src='{% static "events/models/calendar.js" %}'></script>
     <script src='{% static "events/collections/events.js" %}'></script>
     <script src='{% static "events/collections/calendarlist.js" %}'></script>
+    <script src='{% static "events/views/eventview.js" %}'></script>
     <script src='{% static "events/views/calendarview.js" %}'></script>
     <script src='{% static "events/views/calendarlistview.js" %}'></script>
     <script src='{% static "events/views/datepickerwidget.js" %}'></script>

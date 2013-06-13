@@ -1,4 +1,5 @@
 from django.contrib import admin
+from admin_views.admin import AdminViews
 
 from .genericcollection import GenericCollectionTabularInline
 from .models import Calendar, Event, CalendarRelation, EventRelation, Rule
@@ -8,8 +9,12 @@ from .forms import RuleForm, EventAdminForm
 class CalendarRelationInline(GenericCollectionTabularInline):
     model = CalendarRelation
 
+    class Media:
+        js = ('events/genericcollections.js', )
 
-class CalendarAdminOptions(admin.ModelAdmin):
+
+class CalendarAdminOptions(AdminViews):
+    admin_views = (('Calendar View', '/admin/events/calendarview/'), )
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ['name']
     inlines = [CalendarRelationInline]
@@ -49,6 +54,9 @@ class EventAdmin(admin.ModelAdmin):
                 # escape() calls force_unicode.
                 (escape(pk_value), escape(obj.calendar.slug)))
         return super(EventAdmin, self).response_change(request, obj)
+
+    class Media:
+        js = ('events/genericcollections.js', )
 
 
 class RuleAdmin(admin.ModelAdmin):

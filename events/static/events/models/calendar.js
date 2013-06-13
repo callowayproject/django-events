@@ -25,8 +25,9 @@ app.Calendar = Backbone.Model.extend({
                 function() {
                     _this.eventSource = {
                         events: _this.events.toJSON(),
-                        borderColor: _this.get('color')[0],
-                        backgroundColor: _this.get('color')[1]
+                        // borderColor: _this.get('color')[0],
+                        // backgroundColor: _this.get('color')[1]
+                        className: _this.get('className')
                     };
                     _this.trigger('eventsLoaded', _this.get('slug'), _this.eventSource);
                 }

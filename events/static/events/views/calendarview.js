@@ -1,7 +1,7 @@
 var app = app || {};
 
 app.CalendarView = Backbone.View.extend({
-    tag: "li",
+    tagName: "li",
     template: _.template(
         '<input type="checkbox" class="caltoggle" name="<%- slug %>" id="id_<%- slug %>" <%= checked ? "checked" : "" %>>' +
         '&nbsp;<span style="color:<%- color[1] %>;">\u25fc</span>&nbsp;<label for="id_<%- slug %>"><%- name %></label>'),

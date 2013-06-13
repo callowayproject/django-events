@@ -348,7 +348,7 @@ class EventRelation(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.IntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    distinction = models.CharField(_("distinction"), max_length=20, null=True)
+    distinction = models.CharField(_("distinction"), max_length=20, blank=True, null=True)
 
     objects = EventRelationManager()
 
