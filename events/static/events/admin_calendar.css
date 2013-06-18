@@ -137,3 +137,18 @@ ul.item-list {
         ["#979797", "#cdcdcd"], ["#717171", "#CABDBF"], ["#8A404D", "#CCA6AC"],
         ["#D21E5B", "#F691B2"], ["#CA2AE6", "#CD74E6"], ["#9C3CE4", "#A47AE2"]
 */
+
+.module select {
+    margin-left: 10px;
+}
+
+#contentlist {
+    padding-left: 0;
+}
+.contentitem {
+    list-style-type: none;
+    cursor: move;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 5px;
+}

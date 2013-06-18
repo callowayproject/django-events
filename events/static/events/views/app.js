@@ -10,13 +10,16 @@ app.AppView = Backbone.View.extend({
         this.listenTo(app.Calendars, 'change', this.calendarChanged);
         this.DatePicker.render();
         this.CalendarWidget.render({
+            droppable: true,
+            drop: this.contentDrop,
             viewDisplay: this.calendarViewChanged,
             eventClick: this.eventClick,
             eventResize: this.eventResizeOrDrop,
             eventDrop: this.eventResizeOrDrop
         });
         this.EventSources = {}; // locally cached event sources keyed by slug
-
+        this.ContentTypePicker = new app.ContentTypeView({el: $('#contenttype_chooser'), collection: app.ContentTypes});
+        this.ContentTypePicker.render();
     },
     calendarViewChanged: function(view) {
         var _this = this;
@@ -34,6 +37,32 @@ app.AppView = Backbone.View.extend({
             function(item) {
                 _this.listenToOnce(item, 'eventsLoaded', _this.addEventSource);
                 item.loadEvents(view.visStart, view.visEnd);});
+    },
+    contentDrop: function(date, allDay, jsEvent, ui) {
+        var objectid = ui.helper.data('objectid');
+        var contentid = ui.helper.data('contentid');
+        // var calslug = this.CalendarsView.collection.findWhere({id: calendarid}).attributes.slug;
+        var content_event = {
+            csrftoken: app.getCookie('csrftoken'),
+            object_id: objectid,
+            start: $.fullCalendar.formatDate(date, 'yyyy-MM-dd HH:mm'),
+            content_type_id: contentid
+        };
+        $.post('/events/ajax/event_from_content/', content_event);
+
+        // // retrieve the dropped element's stored Event Object
+        // var originalEventObject = $(this).data('eventObject');
+
+        // // we need to copy it, so that multiple events don't have a reference to the same object
+        // var copiedEventObject = $.extend({}, originalEventObject);
+
+        // // assign it the date that was reported
+        // copiedEventObject.start = date;
+        // copiedEventObject.allDay = allDay;
+
+        // // render the event on the calendar
+        // // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+        // this.CalendarWidget.renderEvent(copiedEventObject, true);
     },
     editEventCallback: function(win, event_id, calendar_slug) {
         win.close();

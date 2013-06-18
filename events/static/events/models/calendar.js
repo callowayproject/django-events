@@ -38,3 +38,13 @@ app.Calendar = Backbone.Model.extend({
         return this.eventSource;
     }
 });
+
+app.CalendarList = Backbone.Collection.extend({
+    model: app.Calendar,
+    url: '/events/ajax/calendars/',
+    getChecked: function(){
+        return this.where({checked:true});
+    }
+});
+
+app.Calendars = new app.CalendarList();

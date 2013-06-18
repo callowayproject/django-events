@@ -7,6 +7,8 @@ app.FullCalendarWidget = Backbone.View.extend({
     render: function(options) {
         this.$el.fullCalendar({
             editable: true,
+            droppable: options.droppable || false,
+            drop: options.drop || this.drop,
             eventClick: options.eventClick || this.eventClick,
             eventDrop: options.eventDrop || this.eventDrop,
             eventResize: options.eventResize || this.eventResize,
@@ -42,6 +44,9 @@ app.FullCalendarWidget = Backbone.View.extend({
     eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
         alert("FullCalendarWidget.eventResize: moved:"+dayDelta+" days, "+minuteDelta+"minutes");
     },
+    drop: function(date, allDay) {
+        alert("Dropped on " + date + " with allDay=" + allDay);
+    },
     select: function(startDate, endDate) {
         // new EventView.render();
         alert("FullCalendarWidget.select: "+startDate+" - "+endDate);
@@ -51,5 +56,8 @@ app.FullCalendarWidget = Backbone.View.extend({
     },
     removeSource: function(source){
         this.$el.fullCalendar('removeEventSource', source);
+    },
+    renderEvent: function(event, stick) {
+        this.$el.fullCalendar('renderEvent', event, stick);
     }
 });

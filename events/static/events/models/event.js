@@ -22,3 +22,7 @@ app.Event = Backbone.Model.extend({
         return out;
     }
 });
+
+app.Events = Backbone.Collection.extend({
+    model: app.Event
+});
