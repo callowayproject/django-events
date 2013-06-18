@@ -94,6 +94,9 @@ url(r'^feed/calendar/(.*)/$', UpcomingEventsFeed(), name="upcoming_events_feed")
 
 (r'^ical/calendar/(.*)/$', CalendarICalendar()),
 
+
+url(r'^$', ListView.as_view(queryset=Calendar.objects.all()), name='events'),
+
 # AJAX API
 
 #url for occurrences by encoded data
@@ -114,10 +117,19 @@ url(r'^event_json/$',
     'events.views.event_json',
     name="event_json"),
 
-url(r'^calendars/$',
+url(r'^ajax/calendars/$',
     'events.views.calendar_list',
     name="ajax_calendar_list"),
 
- url(r'^$', ListView.as_view(queryset=Calendar.objects.all()), name='events'),
+url(r'^ajax/contenttypes/$',
+    'events.views.contenttype_list',
+    name="ajax_contenttype_list"),
 
+url(r'^ajax/contenttypes/(?P<contenttype_id>\d+)/content/$',
+    'events.views.contenttype_content',
+    name="ajax_contenttype_content"),
+
+url(r'^ajax/event_from_content/$',
+    'events.views.create_event_for_content',
+    name="ajax_event_from_content"),
 )

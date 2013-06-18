@@ -219,7 +219,7 @@ class CalendarRelation(models.Model):
     may not scale well.  If you use this, keep that in mind.
     '''
 
-    calendar = models.ForeignKey(Calendar, verbose_name=_("calendar"))
+    calendar = models.ForeignKey(Calendar, verbose_name=_("calendar"), related_name='calendarrelation')
     content_type = models.ForeignKey(ContentType)
     object_id = models.IntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')

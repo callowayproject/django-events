@@ -24,11 +24,11 @@
     {% comment %}<script type='text/javascript' src='{% static "events/admin_calendar_view.js" %}'></script>{% endcomment %}
     <script src='{% static "events/models/event.js" %}'></script>
     <script src='{% static "events/models/calendar.js" %}'></script>
-    <script src='{% static "events/collections/events.js" %}'></script>
-    <script src='{% static "events/collections/calendarlist.js" %}'></script>
+    <script src='{% static "events/models/content.js" %}'></script>
     <script src='{% static "events/views/eventview.js" %}'></script>
     <script src='{% static "events/views/calendarview.js" %}'></script>
     <script src='{% static "events/views/calendarlistview.js" %}'></script>
+    <script src='{% static "events/views/contenttypeview.js" %}'></script>
     <script src='{% static "events/views/datepickerwidget.js" %}'></script>
     <script src='{% static "events/views/fullcalendarwidget.js" %}'></script>
     <script src='{% static "events/views/app.js" %}'></script>
@@ -54,6 +54,18 @@
                         {% endfor %}
                         {% endcomment %}
                     </ul>
+                </form>
+            </div>
+            <div class="module">
+                <h3>Content</h3>
+                <form name="contenttype-selector" action="#">
+                <select id="contenttype_chooser">
+                </select>
+                </form>
+                <div class="scrollable">
+                    <ul id="contentlist">
+                    </ul>
+                </div>
                 </form>
             </div>
         </div>
