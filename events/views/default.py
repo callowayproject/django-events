@@ -12,12 +12,10 @@ from events.settings import GET_EVENTS_FUNC, OCCURRENCE_CANCEL_REDIRECT
 from events.forms import EventForm, OccurrenceForm
 from events.forms import EventBackendForm, OccurrenceBackendForm
 from events.models import Event, Occurrence, Calendar
-from events.periods import weekday_names, Period
+from events.periods import weekday_names
 from events.utils import check_event_permissions, coerce_date_dict
-from events.utils import encode_occurrence, decode_occurrence
+from events.utils import decode_occurrence
 import datetime
-import json
-from dateutil.tz import tzutc
 
 
 def calendar(request, calendar_slug, template='events/calendar.html'):
@@ -436,15 +434,6 @@ def event_json(request):
     return HttpResponse(resp)
 
 
-def calendar_list(request):
-    cals = Calendar.objects.values()
-    calendars = json.dumps(list(cals), ensure_ascii=False)
-    response = HttpResponse(calendars)
-    response['Content-Type'] = 'application/json'
-
-    return response
-
-
 def admin_calendar_view(request):
     return render_to_response('admin/events/calendar.html', {
             'title': 'Calendar View',
@@ -453,46 +442,3 @@ def admin_calendar_view(request):
         }, context_instance=RequestContext(request))
 
 
-def calendar_events(request, calendar_slug):
-    """
-    JSON events feed class conforming to the JQuery FullCalendar and
-    jquery-week-calendar CalEvent standard.
-
-    [1]: http://code.google.com/p/jquery-week-calendar/
-    [2]: http://arshaw.com/fullcalendar
-    Corresponds to: http://arshaw.com/fullcalendar/docs/#calevent-objects
-    """
-    calendar = get_object_or_404(Calendar, slug=calendar_slug)
-
-    start = request.GET.get('start', None)
-    end = request.GET.get('end', None)
-    start = start and datetime.datetime.fromtimestamp(int(start), tzutc())
-    end = end and datetime.datetime.fromtimestamp(int(end), tzutc())
-
-    events = GET_EVENTS_FUNC(request, calendar)
-    period = Period(events, start, end)
-    cal_events = []
-    for o in period.get_occurrences():
-        start = o.start.isoformat()
-        end = o.end.isoformat()
-        cal_event = {
-            'id': encode_occurrence(o),
-            'allDay': o.event.all_day,
-            'event_id': o.event.pk,
-            'start': start,
-            'end': end,
-            'title': o.title,
-            'description': o.description,
-            'edit_url': reverse('admin:events_event_change', args=(o.event.pk, )),
-            'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}),
-            'update_occurrence_url': reverse('ajax_edit_occurrence_by_code'),
-            'repeating_id': o.event.rule_id,
-            'repeating_name': getattr(o.event.rule, "name", ""),
-            'repeats': o.event.rule != None,
-        }
-        cal_events.append(cal_event)
-    json_cal_events = json.dumps(cal_events, ensure_ascii=False)
-    response = HttpResponse(json_cal_events)
-    response['Content-Type'] = 'application/json'
-
-    return response
