@@ -41,28 +41,16 @@ app.AppView = Backbone.View.extend({
     contentDrop: function(date, allDay, jsEvent, ui) {
         var objectid = ui.helper.data('objectid');
         var contentid = ui.helper.data('contentid');
-        // var calslug = this.CalendarsView.collection.findWhere({id: calendarid}).attributes.slug;
+        var _this = this;
         var content_event = {
             csrftoken: app.getCookie('csrftoken'),
             object_id: objectid,
             start: $.fullCalendar.formatDate(date, 'yyyy-MM-dd HH:mm'),
             content_type_id: contentid
         };
-        $.post('/events/ajax/event_from_content/', content_event);
-
-        // // retrieve the dropped element's stored Event Object
-        // var originalEventObject = $(this).data('eventObject');
-
-        // // we need to copy it, so that multiple events don't have a reference to the same object
-        // var copiedEventObject = $.extend({}, originalEventObject);
-
-        // // assign it the date that was reported
-        // copiedEventObject.start = date;
-        // copiedEventObject.allDay = allDay;
-
-        // // render the event on the calendar
-        // // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-        // this.CalendarWidget.renderEvent(copiedEventObject, true);
+        $.post('/events/ajax/event_from_content/', content_event, function(data){
+            _this.reloadEventSource(data.calendar_slug);
+        });
     },
     editEventCallback: function(win, event_id, calendar_slug) {
         win.close();

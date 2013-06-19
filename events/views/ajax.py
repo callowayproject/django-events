@@ -112,6 +112,7 @@ def create_event_for_content(request):
             obj = ctype.get_object_for_this_type(id=form.cleaned_data['object_id'])
             calendar = Calendar.objects.get_calendar_for_object(ctype)
             start = form.cleaned_data['start']
+            print start
             event = Event.objects.create(
                 start=start,
                 end=start,
@@ -120,7 +121,23 @@ def create_event_for_content(request):
                 title=unicode(obj),
                 description=''
             )
-            event.save()
-            EventRelation.objects.create_relation(event, obj)
+            # event.save()
+            # EventRelation.objects.create_relation(event, obj)
+        cal_event = {
+            'id': encode_occurrence(event._create_occurrence(start)),
+            'allDay': True,
+            'event_id': event.pk,
+            'start': event.start.isoformat(),
+            'end': event.end.isoformat(),
+            'title': event.title,
+            'description': event.description,
+            'edit_url': reverse('admin:events_event_change', args=(event.pk, )),
+            'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': event.calendar.slug}),
+            'update_occurrence_url': reverse('ajax_edit_occurrence_by_code'),
+            'repeating_id': event.rule_id,
+            'repeating_name': getattr(event.rule, "name", ""),
+            'repeats': event.rule != None,
+            'calendar_slug': calendar.slug,
+        }
 
-    return JSONResponse(event)
+    return JSONResponse(cal_event)
