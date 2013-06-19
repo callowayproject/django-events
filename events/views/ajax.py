@@ -104,7 +104,7 @@ def create_event_for_content(request):
     Create an event for the content submitted
     """
     from events.forms import ContentEventForm
-    event = {}
+    cal_event = {}
     if request.method == 'POST':
         form = ContentEventForm(request.POST)
         if form.is_valid():
@@ -112,17 +112,16 @@ def create_event_for_content(request):
             obj = ctype.get_object_for_this_type(id=form.cleaned_data['object_id'])
             calendar = Calendar.objects.get_calendar_for_object(ctype)
             start = form.cleaned_data['start']
-            print start
             event = Event.objects.create(
                 start=start,
                 end=start,
                 all_day=True,
                 calendar=calendar,
-                title=unicode(obj),
-                description=''
+                title=unicode(obj)[:30] + "...",
+                description=unicode(obj)
             )
-            # event.save()
-            # EventRelation.objects.create_relation(event, obj)
+            event.save()
+            EventRelation.objects.create_relation(event, obj)
         cal_event = {
             'id': encode_occurrence(event._create_occurrence(start)),
             'allDay': True,
