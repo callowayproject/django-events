@@ -129,20 +129,77 @@ ul.item-list {
     border-color: #c2990d;
     background-color:#fad26b;
 }
-/*
+.cal12 {
+    color: #fff;
+    border-color: #38b896;
+    background-color:#96e2c2;
+}
+.cal13 {
+    color: #fff;
+    border-color: #13beb5;
+    background-color:#a2e2e7;
+}
+.cal14 {
+    color: #fff;
+    border-color: #1c8abf;
+    background-color:#a2c8e7;
+}
+.cal15 {
+    color: #fff;
+    border-color: #3173d2;
+    background-color:#518be8;
+}
+.cal16 {
+    color: #fff;
+    border-color: #373AD7;
+    background-color:#9A9CFF;
+}
+.cal17 {
+    color: #fff;
+    border-color: #6733DD;
+    background-color:#B99AFF;
+}
+.cal18 {
+    color: #fff;
+    border-color: #979797;
+    background-color:#cdcdcd;
+}
+.cal19 {
+    color: #fff;
+    border-color: #717171;
+    background-color:#CABDBF;
+}
+.cal20 {
+    color: #fff;
+    border-color: #8A404D;
+    background-color:#CCA6AC;
+}
+.cal21 {
+    color: #fff;
+    border-color: #D21E5B;
+    background-color:#F691B2;
+}
+.cal22 {
+    color: #fff;
+    border-color: #CA2AE6;
+    background-color:#CD74E6;
+}
+.cal23 {
+    color: #fff;
+    border-color: #9C3CE4;
+    background-color:#A47AE2;
+}
 
-        ["#38b896", "#96e2c2"], ["#13beb5", "#a2e2e7"], ["#1c8abf", "#a2c8e7"],
-        ["#3173d2", "#518be8"], ["#373AD7", "#9A9CFF"], ["#6733DD", "#B99AFF"],
-
-        ["#979797", "#cdcdcd"], ["#717171", "#CABDBF"], ["#8A404D", "#CCA6AC"],
-        ["#D21E5B", "#F691B2"], ["#CA2AE6", "#CD74E6"], ["#9C3CE4", "#A47AE2"]
-*/
-
-.module select {
+.module select, .module input {
     margin-left: 10px;
 }
 
 #contentlist {
+    padding-left: 0;
+    margin-left: 10px;
+}
+#contentlist ul {
+    margin-left: 0;
     padding-left: 0;
 }
 .contentitem {
@@ -151,4 +208,9 @@ ul.item-list {
     border: 1px solid #ccc;
     padding: 5px;
     margin-bottom: 5px;
+    background: #fdfdfd;
+    -webkit-box-shadow: inset -1px -1px 0 0 rgba(0, 0, 0, .1);
+    box-shadow: inset -1px -1px 0 0 rgba(0, 0, 0, .1);
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
 }

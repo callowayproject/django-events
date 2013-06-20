@@ -4,7 +4,7 @@ app.ContentTypeView = Backbone.View.extend({
         '<option value="">Select a type</option>' +
         '<% _(contenttypes).each(function(ctype) { %>' +
         '<option value="<%= ctype.id %>"><%= ctype.name %></option>' +
-        '<% }); %>'
+        '<% }); %><br/>'
     ),
     initialize: function() {
         _.bindAll(this);
@@ -19,6 +19,7 @@ app.ContentTypeView = Backbone.View.extend({
             ctypes.push(item.toJSON());
         });
         this.$el.html(this.template({contenttypes: ctypes}));
+        $("#filtercontent").searchbox({process: this.filter});
         return this;
     },
     populateList: function(e) {
@@ -26,18 +27,22 @@ app.ContentTypeView = Backbone.View.extend({
         this.currentModel = this.collection.get(ctypeID);
         this.currentModel.loadContent("", this.renderContent);
     },
+    filter: function(query) {
+        console.log(query);
+        this.currentModel.loadContent(query, this.renderContent);
+    },
     renderContent: function(contents) {
         var tmpl = _.template(
-            '<% _(contents).each(function(c) { %>' +
+            '<ul><% _(contents).each(function(c) { %>' +
             '<li class="contentitem" data-objectid="<%= c.attributes.id %>" data-contentid="<%= ctype %>">' +
             '<%= c.attributes.quote %></li>' +
-            '<% }); %>'
+            '<% }); %></ul>'
         );
-
         $("#contentlist").html(tmpl({'contents': contents.models, 'ctype': this.currentModel.get('id')}));
         $(".contentitem").draggable({
             revert: true,      // immediately snap back to original position
             revertDuration: 0
         });
+        $("#filtercontent").show();
     }
 });

@@ -19,6 +19,7 @@
     <script src='{% static "fullcalendar/fullcalendar.js" %}'></script>
     <script src='{% static "tooltipster/js/jquery.tooltipster.min.js" %}'></script>
     <script src='{% static "events/underscore-min.js" %}'></script>
+    <script src='{% static "events/search.js" %}'></script>
     <script src='{% static "events/backbone-min.js" %}'></script>
 
     {% comment %}<script type='text/javascript' src='{% static "events/admin_calendar_view.js" %}'></script>{% endcomment %}
@@ -62,9 +63,10 @@
                 <select id="contenttype_chooser">
                 </select>
                 </form>
+                <input type="search" id="filtercontent" style="display: none">
                 <div class="scrollable">
-                    <ul id="contentlist">
-                    </ul>
+                    <div id="contentlist">
+                    </div>
                 </div>
                 </form>
             </div>
