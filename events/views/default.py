@@ -1,6 +1,7 @@
 from events.utils import serialize_occurrences
 from urllib import quote
 from django.utils import timezone as tz
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic.edit import DeleteView
 from django.http import HttpResponseRedirect, Http404, HttpResponse
@@ -434,11 +435,10 @@ def event_json(request):
     return HttpResponse(resp)
 
 
+@permission_required('events.can_change_calendar')
 def admin_calendar_view(request):
     return render_to_response('admin/events/calendar.html', {
             'title': 'Calendar View',
             'calendars': Calendar.objects.all(),
             'add': False,
         }, context_instance=RequestContext(request))
-
-
