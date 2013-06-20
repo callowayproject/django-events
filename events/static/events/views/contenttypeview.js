@@ -23,7 +23,7 @@ app.ContentTypeView = Backbone.View.extend({
         return this;
     },
     populateList: function(e) {
-        var ctypeID = e.target.selectedOptions[0].value;
+        var ctypeID = e.target.value;
         this.currentModel = this.collection.get(ctypeID);
         this.currentModel.loadContent("", this.renderContent);
     },
