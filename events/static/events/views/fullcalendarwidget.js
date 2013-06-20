@@ -18,7 +18,7 @@ app.FullCalendarWidget = Backbone.View.extend({
                 right: 'month,agendaWeek,agendaDay'
             },
             viewDisplay: options.viewDisplay,
-            ignoreTimezone: false,
+            ignoreTimezone: true,
             select: options.select || this.select,
             selectable: true,
             selectHelper: true

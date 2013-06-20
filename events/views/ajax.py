@@ -47,8 +47,14 @@ def calendar_events(request, calendar_slug):
     period = Period(events, start, end)
     cal_events = []
     for o in period.get_occurrences():
-        start = o.start.isoformat()
-        end = o.end.isoformat()
+        if o.event.all_day:
+            start = o.start.date().isoformat()
+            diff = o.end - o.start
+            end = o.start.date() + datetime.timedelta(days=diff.days)
+            end = end.isoformat()
+        else:
+            start = o.start.isoformat()
+            end = o.end.isoformat()
         cal_event = {
             'id': encode_occurrence(o),
             'allDay': o.event.all_day,
