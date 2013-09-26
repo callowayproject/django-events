@@ -64,7 +64,6 @@
 
     return this.each(function() {
       var $input = $(this);
-      console.log("Init");
       $input
       .focus()
       .ajaxStart(function() { $.searchbox.start(); })

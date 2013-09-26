@@ -68,13 +68,15 @@ app.AppView = Backbone.View.extend({
         return output;
     },
     eventClick: function(event, jsEvent, view) {
+        console.log("eventClick", event, jsEvent, view);
         var eventview = new app.EventView({model: new app.Event(event)});
         $(jsEvent.currentTarget).tooltipster({
             content: eventview.render().el.outerHTML,
             position: 'left',
             trigger: 'click',
             theme: event.source.className[0],
-            interactive: true
+            interactive: true,
+            maxWidth: 300
         });
         $(jsEvent.currentTarget).tooltipster('show');
         // if (event.edit_url) {

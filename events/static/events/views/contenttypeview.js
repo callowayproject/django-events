@@ -43,6 +43,29 @@ app.ContentTypeView = Backbone.View.extend({
             revert: true,      // immediately snap back to original position
             revertDuration: 0
         });
+        $('.contentitem').tooltipster({
+           content: 'Loading...',
+           updateAnimation: false,
+           position: 'right',
+           functionBefore: function(origin, continueTooltip) {
+
+              // we'll make this function asynchronous and allow the tooltip to go ahead and show the loading notification while fetching our data
+              continueTooltip();
+
+              // next, we want to check if our data has already been cached
+              if (origin.data('ajax') !== 'cached') {
+                 $.ajax({
+                    type: 'GET',
+                    url: '/events/ajax/contenttypes/' + origin.data('contentid') + '/content/' + origin.data('objectid') + '/',
+                    success: function(data) {
+                       // update our tooltip content with our returned data and cache it
+                       origin.tooltipster('update', data).data('ajax', 'cached');
+                    }
+                 });
+              }
+           }
+        });
+
         $("#filtercontent").show();
     }
 });

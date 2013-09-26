@@ -32,4 +32,6 @@ This is useful when creating links as the calendar_by_period view uses this to d
 '?year=2009&month=4&day=1&hour=0&minute=0'
 
 
-    
+
+get_scheduled_content 'app_name.model' [for <date>] as variable_name
+

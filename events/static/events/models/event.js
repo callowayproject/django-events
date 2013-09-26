@@ -3,17 +3,40 @@ var app = app || {};
 app.Event = Backbone.Model.extend({
     defaults: {
         start: function(){ return new Date(); },
-        end: function(){ var d = new Date(); return d.setHours(d.getHours() + 1); },
         title: "New Event",
-        description: ""
+        description: "",
+        daterange: function(){ return this.dateRange(); }
     },
     initialize: function(attributes, options) {
-        this.set("daterange", this.dateRange());
+        var _this = this;
+        _.bindAll(this);
+        var end = attributes.end,
+            start= attributes.start;
+        if ((typeof end === 'undefined') || (end === null)){
+            var d = new Date();
+            if (typeof start !== 'undefined') {
+                d = new Date(start);
+            }
+            d.setHours(d.getHours() + 1);
+            this.set("end", d.toISOString());
+        }
+        if ((this.get('daterange') === "") || (typeof this.daterange === 'undefined')) {
+            this.set("daterange", this.dateRange());
+        }
+        console.dir(attributes);
     },
     dateRange: function() {
-        var start = new Date(this.attributes.start),
-            end = new Date(this.attributes.end),
-            out = "";
+        if (typeof this.attributes !== 'undefined'){
+            var start = new Date(this.attributes.start),
+                end = new Date(this.attributes.end),
+                out = "",
+                allDay = false;
+        } else {
+            var start = new Date(this.start),
+                end = new Date(this.end),
+                out = "",
+                allDay = this.allDay;
+        }
         if (this.attributes.allDay) {
             out = $.fullCalendar.formatDates(start, end, "ddd, MMM d{[ - ddd, MMM d]}");
         } else {

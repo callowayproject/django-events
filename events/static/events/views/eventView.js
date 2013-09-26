@@ -17,6 +17,7 @@ app.EventView = Backbone.View.extend({
         this.listenTo(this.model, 'change', this.render);
     },
     render: function() {
+        console.dir(this.model.toJSON());
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     }

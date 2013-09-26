@@ -129,7 +129,22 @@ url(r'^ajax/contenttypes/(?P<contenttype_id>\d+)/content/$',
     'events.views.contenttype_content',
     name="ajax_contenttype_content"),
 
+url(r'^ajax/contenttypes/(?P<contenttype_id>\d+)/content/(?P<object_id>\d+)/$',
+    'events.views.get_content_hover',
+    name="ajax_content_hover"),
+
 url(r'^ajax/event_from_content/$',
     'events.views.create_event_for_content',
     name="ajax_event_from_content"),
 )
+
+
+# from rest_framework.urlpatterns import format_suffix_patterns
+# from views.api import CalendarList, CalendarDetail, EventDetail
+# apiurlpatterns = patterns('',
+#     url(r'^calendars$', CalendarList.as_view(), name="api-calendar-list"),
+#     url(r'^calendars/(?P<slug>[\w0-9-]+)$', CalendarDetail.as_view(), name="api-calendar-detail"),
+#     url(r'^events/(?P<pk>[0-9]+)$', EventDetail.as_view(), name="api-event-detail"),
+# )
+
+# urlpatterns += format_suffix_patterns(apiurlpatterns)

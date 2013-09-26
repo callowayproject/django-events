@@ -1,5 +1,6 @@
 import datetime
 from collections import defaultdict
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
@@ -23,7 +24,6 @@ def calendar_list(request):
         for rel in cal.calendarrelation.all():
             caldict['relations'][rel.distinction or 'None'] = model_to_dict(rel)
         cals.append(caldict)
-    print cals
     return JSONResponse(list(cals))
 
 
@@ -40,13 +40,18 @@ def calendar_events(request, calendar_slug):
 
     start = request.GET.get('start', None)
     end = request.GET.get('end', None)
-    start = start and datetime.datetime.fromtimestamp(int(start), tzutc())
-    end = end and datetime.datetime.fromtimestamp(int(end), tzutc())
+    if settings.USE_TZ:
+        start = start and datetime.datetime.fromtimestamp(int(start), tzutc())
+        end = end and datetime.datetime.fromtimestamp(int(end), tzutc())
+    else:
+        start = start and datetime.datetime.fromtimestamp(int(start))
+        end = end and datetime.datetime.fromtimestamp(int(end))
 
     events = GET_EVENTS_FUNC(request, calendar)
     period = Period(events, start, end)
     cal_events = []
     for o in period.get_occurrences():
+        audiences = [x[0] for x in o.event.appropriate_for.get_set_flags()]
         if o.event.all_day:
             start = o.start.date().isoformat()
             diff = o.end - o.start
@@ -61,7 +66,7 @@ def calendar_events(request, calendar_slug):
             'event_id': o.event.pk,
             'start': start,
             'end': end,
-            'title': o.title,
+            'title': "%s %s" % ("".join(audiences), o.title),
             'description': o.description,
             'edit_url': reverse('admin:events_event_change', args=(o.event.pk, )),
             'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}),
@@ -69,6 +74,7 @@ def calendar_events(request, calendar_slug):
             'repeating_id': o.event.rule_id,
             'repeating_name': getattr(o.event.rule, "name", ""),
             'repeats': o.event.rule != None,
+            'audiences': audiences,
         }
         cal_events.append(cal_event)
 
@@ -93,15 +99,27 @@ def contenttype_content(request, contenttype_id):
     ctype = ContentType.objects.get_for_id(contenttype_id)
     modeladmin = site._registry[ctype.model_class()]
     response = modeladmin.changelist_view(request)
-
+    qset = response.context_data['cl'].get_query_set(request)
     try:
         calendar = Calendar.objects.get_calendar_for_object(ctype)
     except:
         return JSONResponse([])
     if modeladmin.search_fields:
-        return JSONResponse(list(response.context_data['cl'].get_query_set(request).extra(select={'calendar': calendar.id, 'id': 'id', 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
+        # return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'id': 'id', 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
+        return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
     else:
-        return JSONResponse(list(response.context_data['cl'].get_query_set(request).extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values()))
+        return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values()))
+
+
+def get_content_hover(request, contenttype_id, object_id):
+    """
+    Return the information for the specified object for the hover tooltip
+    """
+    ctype = ContentType.objects.get_for_id(contenttype_id)
+    obj = ctype.get_object_for_this_type(id=object_id)
+    events = EventRelation.objects.get_events_for_object(obj)
+    dates = "<br/>".join([e.start.strftime('%x') for e in events]) or "Not Scheduled"
+    return JSONResponse(dates)
 
 
 @csrf_exempt
@@ -124,7 +142,8 @@ def create_event_for_content(request):
                 all_day=True,
                 calendar=calendar,
                 title=unicode(obj)[:30] + "...",
-                description=unicode(obj)
+                description=unicode(obj),
+                creator=request.user
             )
             event.save()
             EventRelation.objects.create_relation(event, obj)

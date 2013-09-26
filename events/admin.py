@@ -1,6 +1,10 @@
 from django.contrib import admin
 from admin_views.admin import AdminViews
 
+from audience.widgets import AdminBitFieldWidget
+from audience.settings import AUDIENCE_FLAGS
+from bitfield import BitField
+
 from .genericcollection import GenericCollectionTabularInline
 from .models import Calendar, Event, CalendarRelation, EventRelation, Rule
 from .forms import RuleForm, EventAdminForm
@@ -30,7 +34,7 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('start', 'end', 'all_day', 'rule')
     fieldsets = (
         (None, {
-            'fields': ('calendar', 'title', 'description')
+            'fields': ('calendar', 'appropriate_for', 'title', 'description')
         }),
         ('Schedule', {
             'fields': (('start', 'end', 'all_day'), ('rule', 'end_recurring_period'))
@@ -54,6 +58,19 @@ class EventAdmin(admin.ModelAdmin):
                 # escape() calls force_unicode.
                 (escape(pk_value), escape(obj.calendar.slug)))
         return super(EventAdmin, self).response_change(request, obj)
+
+    def save_model(self, request, obj, form, change, *args, **kwargs):
+        if getattr(obj, 'creator', None) is None:
+            obj.creator = request.user
+        super(EventAdmin, self).save_model(request, obj, form, change, *args, **kwargs)
+
+    formfield_overrides = {
+        BitField: {
+            'choices': AUDIENCE_FLAGS,
+            'initial': 1,
+            'widget': AdminBitFieldWidget()
+        }
+    }
 
     class Media:
         js = ('events/genericcollections.js', )

@@ -1,0 +1,490 @@
+/* DAILY VIEW
+---------------------------------------- */
+#day-wrap .time,
+#week-wrap .time {
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    padding: 2px 6px;
+    text-align: right;
+    width: 35px;
+}
+#day-wrap .add-link {
+    position: relative;
+    top: 1px;
+}
+#day-wrap #am-col {
+    position: relative;
+    left: 0px;
+}
+#day-wrap #pm-col {
+    position: relative;
+    left: 0px;
+}
+#day-wrap #am-col.today,
+#day-wrap #pm-col.today {
+    background-color: #eee;
+}
+#day-wrap .all-day-events .occ {
+    width: 571px !important;
+}
+div.slot_column {
+    top: 0px;
+    left: 0px;
+    border: 1px solid #ddd;
+    border-right: none;
+}
+div.slot {
+    position: absolute;
+    left: 0px;
+    border-bottom: 1px dotted #ddd;
+}
+div.slot_column div.slot:last-child {
+    border-bottom: none;
+}
+div.occ_column {
+    position: absolute;
+    border: 1px solid #ddd;
+    top: 0px;
+}
+div.occ {
+    position: absolute;
+    margin-top: -1px;
+    margin-left: -1px;
+    border: 1px solid #c4c4c4;
+    background-color: #f6f6f6;
+    cursor: pointer;
+    overflow: hidden;
+    width: 450px !important;
+}
+div.occ .title {
+    color: #6e6e6e;
+    position: relative;
+    top: 2px;
+    left: 4px;
+}
+a.edit-link {
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+#day-wrap .occ {
+    width: 489px !important;
+}
+div.occ:hover {
+    background-color: #e5e5e5;
+}
+div.occ a:hover {
+    background-color: #ccc;
+}
+div.occ span.actions {
+    display: block;
+    float: right;
+    padding-top: 2px;
+    padding-right: 4px;
+}
+div.occ span.actions span.edit {
+    width: 14px;
+    height: 14px;
+    display: block;
+    float: left;
+    padding-right: 3px;
+}
+
+div.occ_column div.cancelled {
+    background-color:#FFF;
+    border: 1px solid black;
+    color: gray;
+}
+div.occ_column div.cancelled .actions {
+    display: none;
+}
+td.daynumber div.daycell .cancelled {
+    background-color: inherit;
+    color: gray;
+}
+td.daynumber div.daycell .eventcell0 {
+    border-right: none;
+    margin-right:-1px;
+}
+td.daynumber div.daycell .eventcell2 {
+    border-right: none;
+    margin-right:-1px;
+    border-left: none;
+    margin-left:-1px;
+}
+td.daynumber div.daycell .eventcell3 {
+    border-left: none;
+    margin-left:-1px;
+}
+div.type0 {
+    border-bottom: 4px dotted gray;
+}
+div.type3 {
+    border-top: 4px dotted gray;
+}
+div.type2 {
+    border-top: 4px dotted gray;
+    border-bottom: 4px dotted gray;
+}
+
+
+/* EVENT DETAIL DIALOG
+---------------------------------------- */
+div.detail tr { vertical-align: top; }
+
+div.detail td.left { font-weight: bold; }
+
+div.event_options div.title {
+    float: left;
+}
+
+div.event_options div.buttons {
+    float: right;
+}
+
+
+/* EVENT DETAIL VIEW
+---------------------------------------- */
+#event-detail-wrap .actions {
+    opacity: 0;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+}
+#event-detail-wrap .cal-top-nav:hover .actions {
+   opacity: 1;
+}
+#event-detail-wrap .actions {
+    margin-left: 10px;
+}
+#event-detail-wrap .actions a {
+    display: inline-block;
+    opacity: 0.4;
+    transition: opacity .15s ease-in-out;
+    -moz-transition: opacity .15s ease-in-out;
+    -webkit-transition: opacity .15s ease-in-out;
+}
+#event-detail-wrap .actions a:hover {
+    opacity: 1;
+}
+
+
+/* MONTH TOP NAV
+---------------------------------------- */
+.cal-top-nav {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.cal-top-nav .pull-left div {
+    float: left;
+    margin-right: 10px;
+}
+
+.cal-top-nav .period-name {
+    height: 20px;
+    line-height: 20px;
+    padding: 6px 0px;
+}
+
+
+/* MONTH TABLE
+---------------------------------------- */
+.table-wrap table.calendar {
+    width: 100%;
+}
+table.calendar {
+    border-collapse: separate;
+    border-spacing: 0px;
+}
+.table-wrap table.calendar td.daynumber {
+    height: 125px;
+}
+.daysofweek {
+    height: 20px;
+    text-align: center
+}
+table.calendar td {
+    text-align: left;
+    margin: 2px;
+    padding: 1px;
+}
+table.calendar td.daynumber {
+    font-size: 8pt;
+    vertical-align: top;
+    border-top: 1px solid #eee;
+    border-left: 1px solid #eee;
+}
+table.calendar td.daynumber:last-child {
+    border-right: 1px solid #eee;
+}
+table.calendar tr:last-child td.daynumber {
+    border-bottom: 1px solid #eee;
+}
+table.calendar tr:last-child td.today.daynumber {
+    border-bottom: 1px solid #666;
+}
+table.calendar td.noday {
+    background-color: #f6f6f6;
+}
+table.calendar td.free {
+    background-color: #fff;
+}
+table.calendar td.busy {
+    background-color: #fff;
+}
+table.calendar td.today {
+    background-color: #EAEAEA;
+    border: 1px solid #666;
+}
+.small-cal table.calendar td.free .header a,
+.small-cal table.calendar td.free .header a:visited,
+.small-cal table.calendar td.free .header a b {
+    color: #999;
+    font-weight: normal;
+}
+table.calendar td.small {
+    width: 28px;
+    height: 20px;
+    text-align: center
+}
+td.daynumber {
+    height: 50px;
+}
+td.daynumber div.header {
+    margin-bottom: 2px;
+    padding-bottom: 1px;
+    padding-top: 1px;
+    text-align: right;
+}
+td.daynumber div.header a {
+    padding: 1px 5px 1px 90px;
+}
+td.small div.header a {
+    padding: 0;
+}
+td.daynumber div.eventcell {
+    background: #eee;
+    clear: both;
+    cursor: pointer;
+    margin: 0 1px 3px 1px;
+    overflow: auto;
+}
+td.daynumber.today div.eventcell {
+    background: #d1d1d1;
+}
+td.daynumber div.starttime {
+    float: left;
+    width: 40px;
+}
+td.daynumber div.eventdesc {
+    float: left;
+}
+
+
+/* WEEK VIEW
+---------------------------------------- */
+div#week-wrap {
+    margin-top: 10px;
+    overflow: auto;
+    position: relative;
+}
+#week-wrap table {
+    width: 100%;
+    bordder: none;
+}
+#week-wrap table td,
+#week-wrap table th {
+    padding: 0px;
+    margin: 0px;
+    bordder: none;
+}
+#week-wrap table td.weekday,
+#week-wrap table th.weekday {
+    width: 13%;
+}
+#week-wrap table td.weekday1,
+#week-wrap table th.weekday1 {
+    width: 22%;
+}
+div#week-wrap .all-day-events .weekday div.occ {
+    display: block;
+    width: 149px !important;
+}
+div#week-wrap .all-day-events .weekday1 div.occ {
+    display: block;
+    width: 255px !important;
+}
+div#week-wrap .weekday .weekdaytable div.occ {
+    font-size: 12px;
+    width: 129px !important;
+}
+div#week-wrap .weekday1 .weekdaytable div.occ {
+    width: 176px !important;
+}
+#week-wrap table .all-day-events td.weekday7 {
+    border-right: 1px solid #ddd;
+}
+#week-wrap table th.weekday7 {
+    border-right: 1px solid #fff;
+}
+div#week-wrap .weekday7 .weekdaytable .occ_column {
+    width: 129px !important;
+}
+#week-wrap table tr.all-day-events td {
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+div#week-wrap tr.weekdayheader th {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+}
+div#week-wrap .all-day-events td {
+    vertical-align: top;
+}
+div#week-wrap .all-day-events .weekday .occ {
+    font-size: 12px;
+    position: relative;
+    margin: 0px;
+}
+div#week-wrap div.weekdaytable {
+    position: relative;
+}
+div#week-wrap td.weekday.today,
+div#week-wrap th.weekday.today {
+    background-color: #eee;
+}
+div#week-wrap td.weekday span.time {
+    display: none;
+}
+div#week-wrap td.weekday1 span.time {
+    display: inline-block;
+}
+div#week-wrap .weekday span.add-link {
+    display: inline-block;
+    padding: 3px 4px;
+}
+div#week-wrap .weekday1 span.add-link {
+    display: inline-block;
+}
+div#week-wrap .time {
+    top: 0px;
+}
+
+
+/* FORMS AND WIDGETS
+---------------------------------------- */
+div.time-picker {
+    position: absolute;
+    height: 200px;
+    width: 80px; /* needed for IE */
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #000;
+    z-index: 99;
+}
+div.time-picker-12hours {
+    width: 6em; /* needed for IE */
+}
+div.time-picker ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+div.time-picker li {
+    padding: 1px;
+    cursor: pointer;
+}
+div.time-picker li.selected {
+    background: #316AC5;
+    color: #fff;
+}
+#id_start_1, #id_end_1 {
+    width: 68px;
+}
+
+
+/* GENERAL SETTINGS
+---------------------------------------- */
+#demo {
+    border-color:#e0e0e0;
+    border-style: solid;
+    border-width: 0 3px 3px 0;
+    float: left;
+    padding-right: 5px;
+}
+body, td {
+    font-family: sans-serif;
+}
+#messages {
+    position: absolute;
+    top: 50px;
+}
+div.calendarname {
+    border-color:#e0e0e0;
+    border-style: solid;
+    border-width: 0 0px 3px 3px;
+    font-weight: bold;
+    padding-left: 5px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+div.navigation {
+    text-align: center;
+}
+div.navigation a {
+    padding: 0 20px;
+}
+div.tablewrapper {
+    text-align: center;
+}
+#ui-datepicker-div {
+    z-index: 10000;
+}
+
+
+/* 3 MONTH VIEW
+---------------------------------------- */
+#tri-month-wrap {
+    width: 689px;
+    margin: 40px auto;
+}
+#tri-month-wrap .month,
+#year-wrap .month {
+    width: 203px;
+    float: left;
+    margin-right: 40px;
+}
+#tri-month-wrap .month3 {
+    margin-right: 0px;
+}
+#tri-month-wrap .month h3,
+#year-wrap .month h3 {
+    font-size: 1em;
+    line-height: 1em;
+    margin: 0px 0px 10px;
+    text-align: center;
+}
+#tri-month-wrap table td.weeknum,
+#year-wrap table td.weeknum {
+    font-size: 0.7em;
+}
+
+
+/* YEAR VIEW
+---------------------------------------- */
+#year-wrap .month {
+    margin-right: 119px;
+    margin-bottom: 40px;
+    min-height: 209px;
+}
+#year-wrap .month4,
+#year-wrap .month8,
+#year-wrap .month12 {
+    margin-right: 0px;
+}

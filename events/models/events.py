@@ -11,6 +11,10 @@ from django.core.urlresolvers import reverse
 from django.template.defaultfilters import date, urlencode
 from django.utils.translation import ugettext, ugettext_lazy as _
 from dateutil import rrule
+
+from bitfield import BitField
+from audience.settings import AUDIENCE_FLAGS
+
 from .rules import Rule
 from .calendars import Calendar
 from ..utils import OccurrenceReplacer
@@ -28,6 +32,9 @@ class Event(models.Model):
     This model stores meta data for a date.  You can relate this data to many
     other models.
     '''
+    appropriate_for = BitField(verbose_name=_("appropriate for"),
+        flags=AUDIENCE_FLAGS,
+        default=31)
     start = models.DateTimeField(_("start"))
     end = models.DateTimeField(_("end"), help_text=_("The end time must be later than the start time."))
     all_day = models.BooleanField()
@@ -156,6 +163,8 @@ class Event(models.Model):
             return occurrences
         else:
             # check if event is in the period
+            s = self.start
+            e = self.end
             if self.start < end and self.end >= start:
                 return [self._create_occurrence(self.start)]
             else:
