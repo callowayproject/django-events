@@ -25,10 +25,16 @@ app.ContentTypeView = Backbone.View.extend({
     populateList: function(e) {
         var ctypeID = e.target.value;
         this.currentModel = this.collection.get(ctypeID);
-        this.currentModel.loadContent("", this.renderContent);
+        //this.currentModel.loadContent("", this.renderContent);
+        $("#filtercontent").show();
+        this.filter("");
     },
     filter: function(query) {
-        this.currentModel.loadContent(query, this.renderContent);
+        if (query.length >= 3){
+            this.currentModel.loadContent(query, this.renderContent);
+        } else {
+            $("#contentlist").html("<p>Type at least 3 characters</p>");
+        }
     },
     renderContent: function(contents) {
         var tmpl = _.template(
