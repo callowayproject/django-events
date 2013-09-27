@@ -28,7 +28,6 @@
     },
 
     process: function(terms) {
-      console.log("search.js", terms);
       if ((typeof $.searchbox.settings.process !== "undefined") &&
           ($.searchbox.settings.process !== null)) {
         $.searchbox.settings.process(terms);

@@ -100,15 +100,16 @@ def contenttype_content(request, contenttype_id):
     modeladmin = site._registry[ctype.model_class()]
     response = modeladmin.changelist_view(request)
     qset = response.context_data['cl'].get_query_set(request)
-    try:
-        calendar = Calendar.objects.get_calendar_for_object(ctype)
-    except:
-        return JSONResponse([])
+    # try:
+    #     calendar = Calendar.objects.get_calendar_for_object(ctype)
+    # except:
+    #     return JSONResponse([])
     if modeladmin.search_fields:
-        # return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'id': 'id', 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
-        return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
+        # return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
+        return JSONResponse(list(qset.extra(select={'contenttype': contenttype_id}).values('id', *modeladmin.search_fields)))
     else:
-        return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values()))
+        # return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values()))
+        return JSONResponse(list(qset.extra(select={'contenttype': contenttype_id}).values()))
 
 
 def get_content_hover(request, contenttype_id, object_id):
@@ -120,6 +121,15 @@ def get_content_hover(request, contenttype_id, object_id):
     events = EventRelation.objects.get_events_for_object(obj)
     dates = "<br/>".join([e.start.strftime('%x') for e in events]) or "Not Scheduled"
     return JSONResponse(dates)
+
+
+def calendars_for_content(request, contenttype_id):
+    """
+    Return which calendars this content could go on
+    """
+    ctype = ContentType.objects.get_for_id(contenttype_id)
+    calendars = Calendar.objects.get_calendars_for_object(ctype)
+    return JSONResponse(list(calendars.values()))
 
 
 @csrf_exempt
@@ -134,7 +144,10 @@ def create_event_for_content(request):
         if form.is_valid():
             ctype = ContentType.objects.get_for_id(form.cleaned_data['content_type_id'])
             obj = ctype.get_object_for_this_type(id=form.cleaned_data['object_id'])
-            calendar = Calendar.objects.get_calendar_for_object(ctype)
+            if form.cleaned_data['calendar_id']:
+                calendar = Calendar.objects.get(id=form.cleaned_data['calendar_id'])
+            else:
+                calendar = Calendar.objects.get_calendar_for_object(ctype)
             start = form.cleaned_data['start']
             event = Event.objects.create(
                 start=start,

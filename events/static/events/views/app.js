@@ -48,8 +48,48 @@ app.AppView = Backbone.View.extend({
             start: $.fullCalendar.formatDate(date, 'yyyy-MM-dd HH:mm'),
             content_type_id: contentid
         };
-        $.post('/events/ajax/event_from_content/', content_event, function(data){
-            _this.reloadEventSource(data.calendar_slug);
+        var createEvent = function(calendar_id) {
+            content_event.calendar_id = calendar_id;
+            $.post('/events/ajax/event_from_content/', content_event, function(data){
+                _this.reloadEventSource(data.calendar_slug);
+            });
+        };
+        $.get('/events/ajax/contenttypes/' + contentid + '/calendars/', function(data) {
+            if (data.length > 1){
+                _this.displaySelectCalendar(data, createEvent);
+            } else {
+                createEvent(data[0].id);
+            }
+        });
+    },
+    chooseCalendarTmpl: _.template(
+        '<div id="choose_calendar_dialog">' +
+        '<form name="choose_calendar" id="choose_calendar" action="#">' +
+        '    <% _(calendars).each(function(calendar, index) { %>' +
+        '        <p><input type="radio" value="<%= calendar.id %>" name="calendar_option" id="id_<%= calendar.slug %>"<% if (index === 0) { %> checked="checked" <% }; %>>' +
+        '        <label for="id_<%= calendar.slug %>"><%= calendar.name %></label></p>' +
+        '    <% }); %>' +
+        '</form>' +
+        '</div>'
+    ),
+    displaySelectCalendar: function(calendar_list, callback) {
+        var tmpl = this.chooseCalendarTmpl({calendars: calendar_list});
+        $(tmpl).appendTo('body').dialog({
+            modal: true,
+            width: 425,
+            height: 275,
+            buttons: {
+                Cancel: function(){
+                    $(this).dialog("close");
+                },
+                OK: function(){
+                    var selected = $('#choose_calendar input[type="radio"]:checked');
+                    if (selected.length > 0) {
+                        callback(selected.val());
+                    }
+                    $(this).dialog('close');
+                }
+            }
         });
     },
     editEventCallback: function(win, event_id, calendar_slug) {
@@ -68,7 +108,6 @@ app.AppView = Backbone.View.extend({
         return output;
     },
     eventClick: function(event, jsEvent, view) {
-        console.log("eventClick", event, jsEvent, view);
         var eventview = new app.EventView({model: new app.Event(event)});
         $(jsEvent.currentTarget).tooltipster({
             content: eventview.render().el.outerHTML,

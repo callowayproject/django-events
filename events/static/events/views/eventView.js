@@ -7,17 +7,16 @@ app.EventView = Backbone.View.extend({
         '<div class="ev-date"><%= daterange %></div>' +
         '<p><%= description %></p>' +
         '<% if (repeats) { %>' +
-        '<a class="btn" href="<%= edit_url %>">Edit this occurance</a><br/>' +
-        '<a class="btn" href="<%= edit_url %>">Edit all occurances</a>' +
+        '<a class="btn" href="<%= edit_url %>" target="_blank">Edit this occurance</a><br/>' +
+        '<a class="btn" href="<%= edit_url %>" target="_blank">Edit all occurances</a>' +
         '<% } else { %>' +
-        '<a class="btn" href="<%= edit_url %>">Edit this event</a>' +
+        '<a class="btn" href="<%= edit_url %>" target="_blank">Edit this event</a>' +
         '<% } %>'
     ),
     initialize: function(){
         this.listenTo(this.model, 'change', this.render);
     },
     render: function() {
-        console.dir(this.model.toJSON());
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     }

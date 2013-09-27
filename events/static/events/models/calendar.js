@@ -23,7 +23,6 @@ app.Calendar = Backbone.Model.extend({
             };
             this.events.fetch({reset: true, data: data}).done(
                 function() {
-                    console.log(_this.events.toJSON());
                     _this.eventSource = {
                         events: _this.events.toJSON(),
                         // borderColor: _this.get('color')[0],

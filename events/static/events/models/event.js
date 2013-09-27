@@ -23,19 +23,19 @@ app.Event = Backbone.Model.extend({
         if ((this.get('daterange') === "") || (typeof this.daterange === 'undefined')) {
             this.set("daterange", this.dateRange());
         }
-        console.dir(attributes);
     },
     dateRange: function() {
+        var start, end, out, allDay;
         if (typeof this.attributes !== 'undefined'){
-            var start = new Date(this.attributes.start),
-                end = new Date(this.attributes.end),
-                out = "",
-                allDay = false;
+            start = new Date(this.attributes.start);
+            end = new Date(this.attributes.end);
+            out = "";
+            allDay = false;
         } else {
-            var start = new Date(this.start),
-                end = new Date(this.end),
-                out = "",
-                allDay = this.allDay;
+            start = new Date(this.start);
+            end = new Date(this.end);
+            out = "";
+            allDay = this.allDay;
         }
         if (this.attributes.allDay) {
             out = $.fullCalendar.formatDates(start, end, "ddd, MMM d{[ - ddd, MMM d]}");

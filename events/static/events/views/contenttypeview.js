@@ -28,7 +28,6 @@ app.ContentTypeView = Backbone.View.extend({
         this.currentModel.loadContent("", this.renderContent);
     },
     filter: function(query) {
-        console.log(query);
         this.currentModel.loadContent(query, this.renderContent);
     },
     renderContent: function(contents) {
