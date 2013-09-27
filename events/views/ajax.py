@@ -100,16 +100,18 @@ def contenttype_content(request, contenttype_id):
     modeladmin = site._registry[ctype.model_class()]
     response = modeladmin.changelist_view(request)
     qset = response.context_data['cl'].get_query_set(request)
-    # try:
-    #     calendar = Calendar.objects.get_calendar_for_object(ctype)
-    # except:
-    #     return JSONResponse([])
-    if modeladmin.search_fields:
-        # return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values('calendar', 'id', *modeladmin.search_fields)))
-        return JSONResponse(list(qset.extra(select={'contenttype': contenttype_id}).values('id', *modeladmin.search_fields)))
-    else:
-        # return JSONResponse(list(qset.extra(select={'calendar': calendar.id, 'contenttype': contenttype_id}).values()))
-        return JSONResponse(list(qset.extra(select={'contenttype': contenttype_id}).values()))
+    out = []
+    for item in qset.all():
+        record = {
+            'id': item.id,
+            'description': item.__unicode__(),
+            'contenttype': contenttype_id
+        }
+        if modeladmin.search_fields:
+            for field in modeladmin.search_fields:
+                record[field] = getattr(item, field)
+        out.append(record)
+    return JSONResponse(out)
 
 
 def get_content_hover(request, contenttype_id, object_id):

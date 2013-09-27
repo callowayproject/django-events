@@ -34,7 +34,7 @@ app.ContentTypeView = Backbone.View.extend({
         var tmpl = _.template(
             '<ul><% _(contents).each(function(c) { %>' +
             '<li class="contentitem" data-objectid="<%= c.attributes.id %>" data-contentid="<%= ctype %>">' +
-            '<%= c.attributes.quote %></li>' +
+            '<%= c.attributes.description %></li>' +
             '<% }); %></ul>'
         );
         $("#contentlist").html(tmpl({'contents': contents.models, 'ctype': this.currentModel.get('id')}));
