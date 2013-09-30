@@ -23,6 +23,7 @@
     <script src='{% static "events/backbone-min.js" %}'></script>
 
     {% comment %}<script type='text/javascript' src='{% static "events/admin_calendar_view.js" %}'></script>{% endcomment %}
+    <script src='{% static "events/models/paginated_collection.js" %}'></script>
     <script src='{% static "events/models/event.js" %}'></script>
     <script src='{% static "events/models/calendar.js" %}'></script>
     <script src='{% static "events/models/content.js" %}'></script>
@@ -45,21 +46,14 @@
             <br />
             <div class="module">
                 <h3>Calendars</h3>
-                <form name="calendar-selector" action="#">
+                <form name="calendar-selector" id="calendar-selector" action="#">
                     <ul class="item-list" id="calendarlist">
-                        {% comment %}
-                        {% for calendar in calendars %}
-                        <li><input type="checkbox" name="{{ calendar.slug }}" id="id_{{ calendar.slug }}" />
-                            <label for="id_{{ calendar.slug }}">{{ calendar.name }}</label>
-                        </li>
-                        {% endfor %}
-                        {% endcomment %}
                     </ul>
                 </form>
             </div>
             <div class="module">
                 <h3>Content</h3>
-                <form name="contenttype-selector" action="#">
+                <form name="contenttype-selector" id="contenttype-selector" action="#">
                 <select id="contenttype_chooser">
                 </select>
                 </form>

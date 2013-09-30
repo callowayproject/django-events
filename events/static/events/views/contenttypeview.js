@@ -1,4 +1,5 @@
 var app = app || {};
+
 app.ContentTypeView = Backbone.View.extend({
     template: _.template(
         '<option value="">Select a type</option>' +
@@ -10,6 +11,7 @@ app.ContentTypeView = Backbone.View.extend({
         _.bindAll(this);
         this.collection.listenTo(this.collection, 'reset', this.render);
         this.$el.on('change', this.populateList);
+        this.collection.bind('refresh', this.render);
         this.collection.fetch({reset: true});
         this.currentModel = null;
     },
@@ -22,6 +24,14 @@ app.ContentTypeView = Backbone.View.extend({
         $("#filtercontent").searchbox({process: this.filter});
         return this;
     },
+    previous: function() {
+        this.contents.previousPage(this.renderContent);
+        return false;
+    },
+    next: function() {
+        this.contents.nextPage(this.renderContent);
+        return false;
+    },
     populateList: function(e) {
         var ctypeID = e.target.value;
         this.currentModel = this.collection.get(ctypeID);
@@ -30,11 +40,7 @@ app.ContentTypeView = Backbone.View.extend({
         this.filter("");
     },
     filter: function(query) {
-        if (query.length >= 3){
-            this.currentModel.loadContent(query, this.renderContent);
-        } else {
-            $("#contentlist").html("<p>Type at least 3 characters</p>");
-        }
+        this.currentModel.loadContent(query, this.renderContent);
     },
     renderContent: function(contents) {
         var tmpl = _.template(
@@ -43,7 +49,23 @@ app.ContentTypeView = Backbone.View.extend({
             '<%= c.attributes.description %></li>' +
             '<% }); %></ul>'
         );
+        var pag_tmpl = _.template(
+            '<div class="pagination">' +
+            '  <% if (prev) { %><a href="#" id="prev" class="clearfix"><% } %>' +
+            '    <span class="ui-icon ui-icon-circle-triangle-w">Prev</span>' +
+            '  <% if (prev) { %></a><% } %>' +
+            '  Page <%= page %> of <%= pages %>' +
+            '  <% if (next) { %><a href="#" id="next" class="clearfix"><% } %>' +
+            '    <span class="ui-icon ui-icon-circle-triangle-e">Next</span>' +
+            '  <% if (next) { %></a><% } %>' +
+            '</div>'
+        );
         $("#contentlist").html(tmpl({'contents': contents.models, 'ctype': this.currentModel.get('id')}));
+        var pag = pag_tmpl(contents.pageInfo());
+        this.contents = contents;
+        $("#contentlist").prepend(pag);
+        $("#prev").click(this.previous);
+        $("#next").click(this.next);
         $(".contentitem").draggable({
             revert: true,      // immediately snap back to original position
             revertDuration: 0

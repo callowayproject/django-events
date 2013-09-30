@@ -214,3 +214,17 @@ ul.item-list {
     -webkit-border-radius: 3px;
     border-radius: 3px;
 }
+#contenttype-selector {
+    margin-bottom: 5px;
+}
+#filtercontent {
+    width: 90%;
+}
+.pagination {
+    padding-right: 10px;
+    text-align: center;
+    margin: 5px 0;
+}
+.pagination .ui-icon {
+    display: inline-block;
+}

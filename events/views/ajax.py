@@ -95,13 +95,33 @@ def contenttype_content(request, contenttype_id):
     Return all the content for the contenttype_id
     """
     from django.contrib.admin import site
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
     ctype = ContentType.objects.get_for_id(contenttype_id)
     modeladmin = site._registry[ctype.model_class()]
+    new_GET = request.GET.copy()
+    page = new_GET.pop('page', 1)
+    per_page = new_GET.pop('perPage', 5)
+    if isinstance(page, (list, tuple)):
+        page = page[0]
+    if isinstance(per_page, (list, tuple)):
+        per_page = per_page[0]
+    request.GET = new_GET
     response = modeladmin.changelist_view(request)
-    qset = response.context_data['cl'].get_query_set(request)
-    out = []
-    for item in qset.all():
+    qset = response.context_data['cl'].get_query_set(request).all()
+    paginator = Paginator(qset, per_page)
+    try:
+        # page = request.GET.get('page')
+        objects = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        objects = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        objects = paginator.page(paginator.num_pages)
+
+    object_list = []
+    for item in objects.object_list:
         record = {
             'id': item.id,
             'description': item.__unicode__(),
@@ -110,8 +130,13 @@ def contenttype_content(request, contenttype_id):
         if modeladmin.search_fields:
             for field in modeladmin.search_fields:
                 record[field] = getattr(item, field)
-        out.append(record)
-    return JSONResponse(out)
+        object_list.append(record)
+    return JSONResponse({
+        'models': object_list,
+        'page': objects.number,
+        'perPage': per_page,
+        'total': objects.paginator.count
+    })
 
 
 def get_content_hover(request, contenttype_id, object_id):

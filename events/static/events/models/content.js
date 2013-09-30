@@ -3,7 +3,7 @@ var app = app || {};
 app.Content = Backbone.Model.extend({
 });
 
-app.ContentList = Backbone.Collection.extend({
+app.ContentList = PaginatedCollection.extend({
     model: app.Content
 });
 
@@ -18,12 +18,15 @@ app.ContentType = Backbone.Model.extend({
         var _this = this;
         _.bindAll(this);
         this.contenturl = '/events/ajax/contenttypes/' + this.get('id') + '/content/';
-        this.contents = new app.ContentList([], {url: this.contenturl});
+        this.contents = new app.ContentList([], {});
+        this.contents.baseUrl = this.contenturl;
     },
     loadContent: function(searchterm, callback) {
         var _this = this,
             data = {q: searchterm};
-        this.contents.fetch({reset: true, data: data}).done(
+        this.contents.page = 1;
+        this.contents.q = searchterm;
+        this.contents.fetch({data: data}).done(
             function () {
                 if (typeof callback !== "undefined"){
                     callback(_this.contents);
