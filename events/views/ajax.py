@@ -129,7 +129,10 @@ def contenttype_content(request, contenttype_id):
         }
         if modeladmin.search_fields:
             for field in modeladmin.search_fields:
-                record[field] = getattr(item, field)
+                try:
+                    record[field] = getattr(item, field)
+                except AttributeError:
+                    continue
         object_list.append(record)
     return JSONResponse({
         'models': object_list,
