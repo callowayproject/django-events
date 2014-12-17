@@ -4,15 +4,19 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.contrib.contenttypes.models import ContentType
+from dateutil.tz import tzutc
 from events.jsonresponse import JSONResponse
 from events.models import Calendar, Event, CalendarRelation, EventRelation
-from django.contrib.contenttypes.models import ContentType
 from events.periods import Period
 from events.settings import GET_EVENTS_FUNC
 from events.utils import encode_occurrence
-from dateutil.tz import tzutc
-
 from events.utils import model_to_dict
+from audience.settings import VALID_AUDIENCES, AUDIENCE_TYPES
+
+__all__ = ('calendar_list', 'calendar_events', 'contenttype_list',
+           'contenttype_content', 'get_content_hover', 'calendars_for_content',
+           'create_event_for_content', )
 
 
 def calendar_list(request):
@@ -51,7 +55,8 @@ def calendar_events(request, calendar_slug):
     period = Period(events, start, end)
     cal_events = []
     for o in period.get_occurrences():
-        audiences = [x[0] for x in o.event.appropriate_for.get_set_flags()]
+        audience_bits = [x for x in o.event.appropriate_for.get_set_bits() if x in VALID_AUDIENCES]
+        audiences = [AUDIENCE_TYPES[x]['name'][0] for x in audience_bits]
         if o.event.all_day:
             start = o.start.date().isoformat()
             diff = o.end - o.start
@@ -60,20 +65,23 @@ def calendar_events(request, calendar_slug):
         else:
             start = o.start.isoformat()
             end = o.end.isoformat()
+        occurrence_id = encode_occurrence(o)
         cal_event = {
-            'id': encode_occurrence(o),
+            'id': occurrence_id,
             'allDay': o.event.all_day,
             'event_id': o.event.pk,
             'start': start,
             'end': end,
             'title': "%s %s" % ("".join(audiences), o.title),
             'description': o.description,
+            'delete_url': "%s?id=%s&amp;action=cancel" % (reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}), o.event.pk),
+            'delete_occurrence_url': "%s?id=%s&amp;action=cancel" % (reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}), occurrence_id),
             'edit_url': reverse('admin:events_event_change', args=(o.event.pk, )),
             'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}),
-            'update_occurrence_url': reverse('ajax_edit_occurrence_by_code'),
+            'update_occurrence_url': "%s?id=%s" % (reverse('ajax_edit_event', kwargs={'calendar_slug': calendar_slug}), occurrence_id),
             'repeating_id': o.event.rule_id,
             'repeating_name': getattr(o.event.rule, "name", ""),
-            'repeats': o.event.rule != None,
+            'repeats': o.event.rule is not None,
             'audiences': audiences,
         }
         cal_events.append(cal_event)
@@ -190,20 +198,24 @@ def create_event_for_content(request):
             )
             event.save()
             EventRelation.objects.create_relation(event, obj)
+        o = event._create_occurrence(start)
+        occurrence_id = encode_occurrence(o)
         cal_event = {
-            'id': encode_occurrence(event._create_occurrence(start)),
+            'id': occurrence_id,
             'allDay': True,
             'event_id': event.pk,
             'start': event.start.isoformat(),
             'end': event.end.isoformat(),
             'title': event.title,
             'description': event.description,
-            'edit_url': reverse('admin:events_event_change', args=(event.pk, )),
-            'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': event.calendar.slug}),
-            'update_occurrence_url': reverse('ajax_edit_occurrence_by_code'),
+            'delete_url': "%s?id=%s&amp;action=cancel" % (reverse('ajax_edit_event', kwargs={'calendar_slug': calendar.slug}), o.event.pk),
+            'delete_occurrence_url': "%s?id=%s&amp;action=cancel" % (reverse('ajax_edit_event', kwargs={'calendar_slug': calendar.slug}), occurrence_id),
+            'edit_url': reverse('admin:events_event_change', args=(o.event.pk, )),
+            'update_url': reverse('ajax_edit_event', kwargs={'calendar_slug': calendar.slug}),
+            'update_occurrence_url': "%s?id=%s" % (reverse('ajax_edit_event', kwargs={'calendar_slug': calendar.slug}), occurrence_id),
             'repeating_id': event.rule_id,
             'repeating_name': getattr(event.rule, "name", ""),
-            'repeats': event.rule != None,
+            'repeats': event.rule is not None,
             'calendar_slug': calendar.slug,
         }
 
