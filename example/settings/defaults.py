@@ -175,6 +175,39 @@ FIRST_DAY_OF_WEEK = 1  # Monday
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/signin/'
 
+AUDIENCE_SETTINGS = {
+    'AUDIENCE_TYPES': {
+        5: {'name': 'Kid',
+            'plural_name': 'Kids',
+            'code': 'KD',
+            'description': 'Grades K-5',
+            'default_text_difficulty': 3},
+        3: {'name': 'Family',
+            'plural_name': 'Families',
+            'code': 'FM',
+            'description': 'Caregivers of children ages 5-10',
+            'default_text_difficulty': 1},
+        2: {'name': 'Informal Educator',
+            'plural_name': 'Informal Educators',
+            'code': 'IE',
+            'description': 'Educators of Grades K-12+ in out-of-school settings',
+            'default_text_difficulty': 1},
+        4: {'name': 'Student',
+            'plural_name': 'Students',
+            'code': 'ST',
+            'description': 'Grades 6-12+',
+            'default_text_difficulty': 1},
+        1: {'name': 'Educator',
+            'plural_name': 'Educators',
+            'code': 'TE',
+            'description': 'Educators of Grades K-12+ in school settings',
+            'default_text_difficulty': 1},
+    },
+    'VALID_AUDIENCES': [1, 3, 4, ],
+    'DEFAULT_AUDIENCE': 1,
+}
+
+
 try:
     from local_settings import *
 except ImportError:

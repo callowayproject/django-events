@@ -18,6 +18,12 @@ from events.utils import check_event_permissions, coerce_date_dict
 from events.utils import decode_occurrence
 import datetime
 
+__all__ = ('calendar', 'calendar_by_periods', 'event', 'occurrence',
+    'edit_occurrence', 'cancel_occurrence', 'get_occurrence',
+    'create_or_edit_event', 'delete_event', 'calendar_by_periods_json',
+    'ajax_edit_occurrence_by_code', 'ajax_edit_event', 'event_json',
+    'admin_calendar_view')
+
 
 def calendar(request, calendar_slug, template='events/calendar.html'):
     """

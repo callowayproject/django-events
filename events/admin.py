@@ -32,6 +32,7 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ('title', )
     list_display = ('title', 'start', 'end', 'all_day', 'rule')
     list_filter = ('start', 'end', 'all_day', 'rule')
+    date_hierarchy = 'start'
     fieldsets = (
         (None, {
             'fields': ('calendar', 'appropriate_for', 'title', 'description')

@@ -5,4 +5,4 @@ recursive-include events/locale *
 
 recursive-include events/static *
 
-prune example
+prune example/
