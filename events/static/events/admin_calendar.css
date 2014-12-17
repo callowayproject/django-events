@@ -244,6 +244,7 @@ ul.item-list {
   padding: 5px 10px 5px 10px;
   border: solid #808080 1px;
   text-decoration: none;
+  display: inline-block;
 }
 
 .btn:hover {
@@ -254,4 +255,7 @@ ul.item-list {
   background-image: -o-linear-gradient(top, #f0f0f0, #dedede);
   background-image: linear-gradient(to bottom, #f0f0f0, #dedede);
   text-decoration: none;
+}
+.btn + .btn {
+    margin-top: 5px;
 }

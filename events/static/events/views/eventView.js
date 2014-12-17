@@ -7,9 +7,9 @@ app.EventView = Backbone.View.extend({
         '<div class="ev-date"><%= daterange %></div>' +
         '<p><%= description %></p>' +
         '<% if (repeats) { %>' +
-        '<a class="btn" href="<%= edit_occurrence_url %>" target="_blank">Edit this occurance</a><br/>' +
+        // '<a class="btn" href="<%= edit_occurrence_url %>" target="_blank">Edit this occurance</a>' +
         '<a class="btn" href="<%= edit_url %>" target="_blank">Edit all occurances</a>' +
-        '<a class="btn deleteOccurrence" href="<%= delete_occurrence_url %>">Delete this occurance</a><br/>' +
+        // '<a class="btn deleteOccurrence" href="<%= delete_occurrence_url %>">Delete this occurance</a>' +
         '<a class="btn delete" href="<%= delete_url %>">Delete all occurances</a>' +
         '<% } else { %>' +
         '<a class="btn" href="<%= edit_url %>" target="_blank">Edit this event</a>' +
