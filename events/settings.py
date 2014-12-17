@@ -22,14 +22,16 @@ DEFAULT_SETTINGS = {
     # URL to redirect to to after an occurrence is canceled
     'OCCURRENCE_CANCEL_REDIRECT': None,
 
-    'RELATION_MODELS': [],
+    'EVENT_RELATION_MODELS': [],
+    'CALENDAR_RELATION_MODELS': [],
 
 }
 
 USER_SETTINGS = DEFAULT_SETTINGS.copy()
 USER_SETTINGS.update(getattr(settings, 'EVENTS_SETTINGS', {}))
 
-RELATIONS = [Q(app_label=al, model=m) for al, m in [x.split('.') for x in USER_SETTINGS['RELATION_MODELS']]]
+RELATIONS = [Q(app_label=al, model=m) for al, m in [x.split('.') for x in USER_SETTINGS['EVENT_RELATION_MODELS']]]
+CALENDAR_RELATIONS = [Q(app_label=al, model=m) for al, m in [x.split('.') for x in USER_SETTINGS['CALENDAR_RELATION_MODELS']]]
 
 if hasattr(settings, 'FIRST_DAY_OF_WEEK'):
     try:

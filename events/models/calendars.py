@@ -9,7 +9,7 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone as tz
 
 from ..utils import EventListManager
-from ..settings import RELATIONS
+from ..settings import CALENDAR_RELATIONS
 
 
 class CalendarManager(models.Manager):
@@ -178,10 +178,10 @@ class Calendar(models.Model):
         return reverse('s_create_event_in_calendar', args=[self.slug])
 
 
-if RELATIONS:
-    relation_limits = reduce(lambda x, y: x | y, RELATIONS)
+if CALENDAR_RELATIONS:
+    relation_limits = reduce(lambda x, y: x | y, CALENDAR_RELATIONS)
 else:
-    relation_limits = []
+    relation_limits = {}
 
 
 class CalendarRelationManager(models.Manager):
