@@ -15,9 +15,8 @@ from dateutil import rrule
 from bitfield import BitField
 from audience.settings import AUDIENCE_FLAGS
 
-from .rules import Rule
-from .calendars import Calendar
 from ..utils import OccurrenceReplacer
+from ..settings import RELATIONS
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -32,7 +31,8 @@ class Event(models.Model):
     This model stores meta data for a date.  You can relate this data to many
     other models.
     '''
-    appropriate_for = BitField(verbose_name=_("appropriate for"),
+    appropriate_for = BitField(
+        verbose_name=_("appropriate for"),
         flags=AUDIENCE_FLAGS,
         default=31)
     start = models.DateTimeField(_("start"))
@@ -42,15 +42,18 @@ class Event(models.Model):
     description = models.TextField(_("description"), null=True, blank=True)
     creator = models.ForeignKey(AUTH_USER_MODEL, null=True, verbose_name=_("creator"))
     created_on = models.DateTimeField(_("created on"), default=tz.now)
-    rule = models.ForeignKey(Rule,
+    rule = models.ForeignKey(
+        'events.Rule',
         null=True, blank=True,
         verbose_name=_("Repeats"),
         help_text=_("Select '----' for a one time only event."),
         related_name="events")
-    end_recurring_period = models.DateTimeField(_("Ends on"),
+    end_recurring_period = models.DateTimeField(
+        _("Ends on"),
         null=True, blank=True,
         help_text=_("This date is ignored for one time only events."))
-    calendar = models.ForeignKey(Calendar,
+    calendar = models.ForeignKey(
+        'events.Calendar',
         related_name="events")
     objects = EventManager()
 
@@ -152,7 +155,6 @@ class Event(models.Model):
         difference = (self.end - self.start)
         if self.rule is not None:
             occurrences = []
-            per = self.end_recurring_period
             if self.end_recurring_period and self.end_recurring_period < end:
                 end = self.end_recurring_period
             rule = self.get_rrule_object()
@@ -163,8 +165,6 @@ class Event(models.Model):
             return occurrences
         else:
             # check if event is in the period
-            s = self.start
-            e = self.end
             if self.start < end and self.end >= start:
                 return [self._create_occurrence(self.start)]
             else:
@@ -203,6 +203,12 @@ class Event(models.Model):
         while True:
             next = generator.next()
             yield occ_replacer.get_occurrence(next)
+
+
+if RELATIONS:
+    relation_limits = reduce(lambda x, y: x | y, RELATIONS)
+else:
+    relation_limits = {}
 
 
 class EventRelationManager(models.Manager):
@@ -334,6 +340,14 @@ class EventRelationManager(models.Manager):
         er.save()
         return er
 
+    def get_content_type(self, content_type):
+        qs = self.get_query_set()
+        return qs.filter(content_type__name=content_type)
+
+    def get_relation_type(self, relation_type):
+        qs = self.get_query_set()
+        return qs.filter(relation_type=relation_type)
+
 
 class EventRelation(models.Model):
     '''
@@ -353,11 +367,18 @@ class EventRelation(models.Model):
     DISCLAIMER: while this model is a nice out of the box feature to have, it
     may not scale well.  If you use this keep that in mindself.
     '''
-    event = models.ForeignKey(Event, verbose_name=_("event"))
-    content_type = models.ForeignKey(ContentType)
+    event = models.ForeignKey(
+        Event,
+        verbose_name=_("event"))
+    content_type = models.ForeignKey(
+        ContentType,
+        limit_choices_to=relation_limits)
     object_id = models.IntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    distinction = models.CharField(_("distinction"), max_length=20, blank=True, null=True)
+    distinction = models.CharField(
+        _("distinction"),
+        max_length=20,
+        blank=True, null=True)
 
     objects = EventRelationManager()
 
@@ -413,7 +434,8 @@ class Occurrence(models.Model):
 
     def get_absolute_url(self):
         if self.pk is not None:
-            return reverse('occurrence', kwargs={'occurrence_id': self.pk,
+            return reverse('occurrence', kwargs={
+                'occurrence_id': self.pk,
                 'event_id': self.event.id})
         return reverse('occurrence_by_date', kwargs={
             'event_id': self.event.id,

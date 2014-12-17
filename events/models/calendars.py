@@ -9,6 +9,7 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone as tz
 
 from ..utils import EventListManager
+from ..settings import RELATIONS
 
 
 class CalendarManager(models.Manager):
@@ -177,6 +178,12 @@ class Calendar(models.Model):
         return reverse('s_create_event_in_calendar', args=[self.slug])
 
 
+if RELATIONS:
+    relation_limits = reduce(lambda x, y: x | y, RELATIONS)
+else:
+    relation_limits = []
+
+
 class CalendarRelationManager(models.Manager):
     def create_relation(self, calendar, content_object, distinction=None, inheritable=True):
         """
@@ -194,6 +201,14 @@ class CalendarRelationManager(models.Manager):
         )
         cr.save()
         return cr
+
+    def get_content_type(self, content_type):
+        qs = self.get_query_set()
+        return qs.filter(content_type__name=content_type)
+
+    def get_relation_type(self, relation_type):
+        qs = self.get_query_set()
+        return qs.filter(relation_type=relation_type)
 
 
 class CalendarRelation(models.Model):
@@ -219,12 +234,22 @@ class CalendarRelation(models.Model):
     may not scale well.  If you use this, keep that in mind.
     '''
 
-    calendar = models.ForeignKey(Calendar, verbose_name=_("calendar"), related_name='calendarrelation')
-    content_type = models.ForeignKey(ContentType)
+    calendar = models.ForeignKey(
+        Calendar,
+        verbose_name=_("calendar"),
+        related_name='calendarrelation')
+    content_type = models.ForeignKey(
+        ContentType,
+        limit_choices_to=relation_limits)
     object_id = models.IntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    distinction = models.CharField(_("distinction"), max_length=20, null=True)
-    inheritable = models.BooleanField(_("inheritable"), default=True)
+    distinction = models.CharField(
+        _("distinction"),
+        max_length=20,
+        null=True)
+    inheritable = models.BooleanField(
+        _("inheritable"),
+        default=True)
 
     objects = CalendarRelationManager()
 
