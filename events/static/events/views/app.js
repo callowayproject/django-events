@@ -109,15 +109,24 @@ app.AppView = Backbone.View.extend({
     },
     eventClick: function(event, jsEvent, view) {
         var eventview = new app.EventView({model: new app.Event(event)});
-        $(jsEvent.currentTarget).tooltipster({
-            content: eventview.render().el.outerHTML,
+        var content = $(eventview.render().el.outerHTML);
+        var target = $(jsEvent.currentTarget);
+        target.tooltipster({
+            content: content,
             position: 'left',
             trigger: 'click',
             theme: event.source.className[0],
             interactive: true,
             maxWidth: 300
         });
-        $(jsEvent.currentTarget).tooltipster('show');
+        target.tooltipster('show', function() {
+            this.tooltipster('content').find('.btn.delete').on('click', function(e) {
+                eventview.deleteEvent(e);
+                target.tooltipster('hide');
+                target.remove();
+            });
+        });
+
         // if (event.edit_url) {
         //     if (event.edit_url.search(/\?/) >= 0) {
         //         href = event.edit_url + '&_popup=1';

@@ -228,3 +228,30 @@ ul.item-list {
 .pagination .ui-icon {
     display: inline-block;
 }
+.btn, a.btn:link, a.btn:visited {
+  background: #f5f5f5;
+  background-image: -webkit-linear-gradient(top, #f5f5f5, #cfcfcf);
+  background-image: -moz-linear-gradient(top, #f5f5f5, #cfcfcf);
+  background-image: -ms-linear-gradient(top, #f5f5f5, #cfcfcf);
+  background-image: -o-linear-gradient(top, #f5f5f5, #cfcfcf);
+  background-image: linear-gradient(to bottom, #f5f5f5, #cfcfcf);
+  -webkit-border-radius: 5;
+  -moz-border-radius: 5;
+  border-radius: 5px;
+  font-family: Arial;
+  color: #333333;
+  font-size: 14px;
+  padding: 5px 10px 5px 10px;
+  border: solid #808080 1px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: #f0f0f0;
+  background-image: -webkit-linear-gradient(top, #f0f0f0, #dedede);
+  background-image: -moz-linear-gradient(top, #f0f0f0, #dedede);
+  background-image: -ms-linear-gradient(top, #f0f0f0, #dedede);
+  background-image: -o-linear-gradient(top, #f0f0f0, #dedede);
+  background-image: linear-gradient(to bottom, #f0f0f0, #dedede);
+  text-decoration: none;
+}
