@@ -74,9 +74,12 @@ app.ContentTypeView = Backbone.View.extend({
            content: 'Loading...',
            updateAnimation: false,
            position: 'right',
+           contentAsHTML: true,
            functionBefore: function(origin, continueTooltip) {
 
-              // we'll make this function asynchronous and allow the tooltip to go ahead and show the loading notification while fetching our data
+              // we'll make this function asynchronous and allow the tooltip to
+              // go ahead and show the loading notification while fetching our
+              // data
               continueTooltip();
 
               // next, we want to check if our data has already been cached
