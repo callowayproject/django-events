@@ -89,6 +89,6 @@ class RuleForm(forms.ModelForm):
 
 class ContentEventForm(forms.Form):
     start = forms.DateTimeField()
-    content_type_id = forms.IntegerField()
+    content_type_id = forms.CharField()
     object_id = forms.IntegerField()
     calendar_id = forms.IntegerField(required=False)

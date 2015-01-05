@@ -1,4 +1,5 @@
 import datetime
+import json
 from collections import defaultdict
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -94,8 +95,34 @@ def contenttype_list(request):
     Get all content types that are attached to a calendar
     """
     ctype = ContentType.objects.get_for_model(ContentType)
-    valid_types = CalendarRelation.objects.filter(content_type=ctype).values_list('object_id', flat=True)
-    return JSONResponse(ContentType.objects.filter(id__in=list(valid_types)).values())
+    valid_types = CalendarRelation.objects.filter(content_type=ctype).select_related()
+    ctype_list = []
+    seen_ctypes = []
+    for t in valid_types:
+        print t.limit_choices_to
+        try:
+            limits = json.loads(t.limit_choices_to)
+        except Exception as e:
+            print e
+            limits = False
+        if limits:  # A calendar with valid limits, means we need a custom name and id
+            ctype_id = '%s_%s' % (t.content_object.id, t.id)
+            ctype_name = '%s for %s' % (t.content_object.name, t.calendar.name)
+        else:
+            ctype_id = t.content_object.id
+            ctype_name = t.content_object.name
+        print ctype_id, ctype_name
+        if ctype_id in seen_ctypes:
+            continue
+        seen_ctypes.append(ctype_id)
+        ctype_list.append({
+            'model': t.content_object.model,
+            'app_label': t.content_object.app_label,
+            'name': ctype_name,
+            'id': ctype_id,
+        })
+
+    return JSONResponse(ctype_list)
 
 
 def contenttype_content(request, contenttype_id):
@@ -104,8 +131,15 @@ def contenttype_content(request, contenttype_id):
     """
     from django.contrib.admin import site
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-    ctype = ContentType.objects.get_for_id(contenttype_id)
+    if '_' in contenttype_id:
+        ctype_id, calrelation_id = map(int, contenttype_id.split('_'))
+        calrelation = get_object_or_404(CalendarRelation, id=calrelation_id)
+        limit_choices_to = json.loads(calrelation.limit_choices_to)
+    else:
+        ctype_id = int(contenttype_id)
+        cal_id = None
+        limit_choices_to = False
+    ctype = ContentType.objects.get_for_id(ctype_id)
     modeladmin = site._registry[ctype.model_class()]
     new_GET = request.GET.copy()
     page = new_GET.pop('page', 1)
@@ -117,6 +151,8 @@ def contenttype_content(request, contenttype_id):
     request.GET = new_GET
     response = modeladmin.changelist_view(request)
     qset = response.context_data['cl'].get_query_set(request).all()
+    if limit_choices_to:
+        qset = qset.filter(**limit_choices_to)
     paginator = Paginator(qset, per_page)
     try:
         # page = request.GET.get('page')
@@ -154,7 +190,11 @@ def get_content_hover(request, contenttype_id, object_id):
     """
     Return the information for the specified object for the hover tooltip
     """
-    ctype = ContentType.objects.get_for_id(contenttype_id)
+    if '_' in contenttype_id:
+        ctype_id, calrelation_id = map(int, contenttype_id.split('_'))
+    else:
+        ctype_id = int(contenttype_id)
+    ctype = ContentType.objects.get_for_id(ctype_id)
     obj = ctype.get_object_for_this_type(id=object_id)
     events = EventRelation.objects.get_events_for_object(obj)
     dates = "<br/>".join([e.start.strftime('%x') for e in events]) or "Not Scheduled"
@@ -165,9 +205,16 @@ def calendars_for_content(request, contenttype_id):
     """
     Return which calendars this content could go on
     """
-    ctype = ContentType.objects.get_for_id(contenttype_id)
-    calendars = Calendar.objects.get_calendars_for_object(ctype)
-    return JSONResponse(list(calendars.values()))
+    if '_' in contenttype_id:
+        ctype_id, calrelation_id = map(int, contenttype_id.split('_'))
+        calrelation = get_object_or_404(CalendarRelation, id=calrelation_id)
+        cal_dict = dict([(k, v) for k, v in calrelation.calendar.__dict__.items() if k[0] != '_'])
+        return JSONResponse([cal_dict])
+    else:
+        ctype_id = int(contenttype_id)
+        ctype = ContentType.objects.get_for_id(ctype_id)
+        calendars = Calendar.objects.get_calendars_for_object(ctype)
+        return JSONResponse(list(calendars.values()))
 
 
 @csrf_exempt
@@ -180,7 +227,11 @@ def create_event_for_content(request):
     if request.method == 'POST':
         form = ContentEventForm(request.POST)
         if form.is_valid():
-            ctype = ContentType.objects.get_for_id(form.cleaned_data['content_type_id'])
+            if '_' in form.cleaned_data['content_type_id']:
+                ctype_id, calrelation_id = map(int, form.cleaned_data['content_type_id'].split('_'))
+            else:
+                ctype_id = int(form.cleaned_data['content_type_id'])
+            ctype = ContentType.objects.get_for_id(ctype_id)
             obj = ctype.get_object_for_this_type(id=form.cleaned_data['object_id'])
             if form.cleaned_data['calendar_id']:
                 calendar = Calendar.objects.get(id=form.cleaned_data['calendar_id'])

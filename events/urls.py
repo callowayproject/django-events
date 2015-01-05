@@ -126,15 +126,15 @@ urlpatterns = patterns(
         'events.views.contenttype_list',
         name="ajax_contenttype_list"),
 
-    url(r'^ajax/contenttypes/(?P<contenttype_id>\d+)/calendars/$',
+    url(r'^ajax/contenttypes/(?P<contenttype_id>[\d_-]+)/calendars/$',
         'events.views.calendars_for_content',
         name="ajax_contenttype_calendars"),
 
-    url(r'^ajax/contenttypes/(?P<contenttype_id>\d+)/content/$',
+    url(r'^ajax/contenttypes/(?P<contenttype_id>[\d_-]+)/content/$',
         'events.views.contenttype_content',
         name="ajax_contenttype_content"),
 
-    url(r'^ajax/contenttypes/(?P<contenttype_id>\d+)/content/(?P<object_id>\d+)/$',
+    url(r'^ajax/contenttypes/(?P<contenttype_id>[\d_-]+)/content/(?P<object_id>\d+)/$',
         'events.views.get_content_hover',
         name="ajax_content_hover"),
 

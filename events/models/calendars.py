@@ -246,7 +246,15 @@ class CalendarRelation(models.Model):
     distinction = models.CharField(
         _("distinction"),
         max_length=20,
-        null=True)
+        blank=True, null=True)
+    limit_choices_to = models.TextField(
+        _('limit choices'),
+        default="{}",
+        blank=True, null=True,
+        help_text=_('This field is for filtering the available choices. The '
+                    'content should be a JSON-formatted object. The keys are '
+                    'the field name with optional lookup suffix. The values '
+                    'are the required value for that field.'))
     inheritable = models.BooleanField(
         _("inheritable"),
         default=True)
