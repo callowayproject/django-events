@@ -75,7 +75,6 @@ def parse_byweekno(param, value):
 def parse_byweekday(param, value):
     values = []
     for val in value.split(','):
-        print val
         if val in RRULE_WEEKDAYS:
             try:
                 values.append(rrule.__dict__[val])
@@ -113,12 +112,10 @@ def parse_params(paramstring):
     {'count': 1, 'byminute': [1, 2, 4, 5], 'bysecond': 1}
     """
     if paramstring.strip() == "":
-        print "Nothing found", paramstring.strip()
         return {}
     params = paramstring.split(';')
     param_dict = []
     for param in params:
-        print param
         if param.strip() == "":
             continue  # skip blanks
         paramval = [i.strip() for i in param.split(':')]

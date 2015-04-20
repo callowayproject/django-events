@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from dateutil.tz import tzutc
 from events.jsonresponse import JSONResponse
-from events.models import Calendar, Event, CalendarRelation, EventRelation
+from events.models import Calendar, Event, CalendarRelation, EventRelation, Rule
 from events.periods import Period
 from events.settings import GET_EVENTS_FUNC
 from events.utils import encode_occurrence
@@ -99,7 +99,6 @@ def contenttype_list(request):
     ctype_list = []
     seen_ctypes = []
     for t in valid_types:
-        print t.limit_choices_to
         try:
             limits = json.loads(t.limit_choices_to)
         except Exception as e:
@@ -111,7 +110,6 @@ def contenttype_list(request):
         else:
             ctype_id = t.content_object.id
             ctype_name = t.content_object.name
-        print ctype_id, ctype_name
         if ctype_id in seen_ctypes:
             continue
         seen_ctypes.append(ctype_id)
@@ -131,6 +129,7 @@ def contenttype_content(request, contenttype_id):
     """
     from django.contrib.admin import site
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
     if '_' in contenttype_id:
         ctype_id, calrelation_id = map(int, contenttype_id.split('_'))
         calrelation = get_object_or_404(CalendarRelation, id=calrelation_id)
@@ -222,6 +221,12 @@ def create_event_for_content(request):
     """
     Create an event for the content submitted
     """
+    from events.settings import DEFAULT_RULE_ID
+    try:
+        rule = Rule.objects.get(id=DEFAULT_RULE_ID)
+    except:
+        rule = None
+
     from events.forms import ContentEventForm
     cal_event = {}
     if request.method == 'POST':
@@ -245,7 +250,8 @@ def create_event_for_content(request):
                 calendar=calendar,
                 title=unicode(obj)[:30] + "...",
                 description=unicode(obj),
-                creator=request.user
+                creator=request.user,
+                rule=rule
             )
             event.save()
             EventRelation.objects.create_relation(event, obj)

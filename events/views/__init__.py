@@ -1,2 +1,2 @@
 from .default import *
-from ajax import *
+from .ajax import *

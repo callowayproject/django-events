@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import url, patterns
+from django.conf.urls import url, patterns
 from django.views.generic import ListView
 from events.models import Calendar
 from events.feeds import UpcomingEventsFeed
@@ -55,7 +55,7 @@ urlpatterns = patterns(
         name="calendar_events",
         ),
 
-    #Event Urls
+    # Event Urls
     url(r'^event/create/(?P<calendar_slug>[-\w]+)/$',
         'events.views.create_or_edit_event',
         name='calendar_create_event'),
@@ -69,7 +69,7 @@ urlpatterns = patterns(
         'events.views.delete_event',
         name="delete_event"),
 
-    #urls for already persisted occurrences
+    # urls for already persisted occurrences
     url(r'^occurrence/(?P<event_id>\d+)/(?P<occurrence_id>\d+)/$',
         'events.views.occurrence',
         name="occurrence"),
@@ -80,7 +80,7 @@ urlpatterns = patterns(
         'events.views.edit_occurrence',
         name="edit_occurrence"),
 
-    #urls for unpersisted occurrences
+    # urls for unpersisted occurrences
     url(r'^occurrence/(?P<event_id>\d+)/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<hour>\d+)/(?P<minute>\d+)/(?P<second>\d+)/$',
         'events.views.occurrence',
         name="occurrence_by_date"),
@@ -91,7 +91,7 @@ urlpatterns = patterns(
         'events.views.edit_occurrence',
         name="edit_occurrence_by_date"),
 
-    #feed urls
+    # feed urls
     url(r'^feed/calendar/(.*)/$', UpcomingEventsFeed(), name="upcoming_events_feed"),
 
     (r'^ical/calendar/(.*)/$', CalendarICalendar()),
@@ -100,7 +100,7 @@ urlpatterns = patterns(
 
     # AJAX API
 
-    #url for occurrences by encoded data
+    # url for occurrences by encoded data
     url(r'^ajax/occurrence/edit_by_code/$',
         'events.views.ajax_edit_occurrence_by_code',
         name="ajax_edit_occurrence_by_code"),
