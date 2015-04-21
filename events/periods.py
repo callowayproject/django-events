@@ -419,7 +419,7 @@ class Day(Period):
         else:
             return False
 
-    def __unicode__(self):
+    def __str__(self):
         from django.template.defaultfilters import date
         return date(self.utc_start, "l, %s" % settings.DATE_FORMAT)
 
