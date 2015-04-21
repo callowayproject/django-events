@@ -1,6 +1,14 @@
+from __future__ import unicode_literals
+from six.moves.builtins import str
+from six.moves.builtins import object
+from six import with_metaclass
 from django.db import models
+from django.db.models.base import ModelBase
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 from dateutil import rrule
+
+from events.utils import get_model_bases
 
 RRULE_WEEKDAYS = {"MO": 0, "TU": 1, "WE": 2, "TH": 3, "FR": 4, "SA": 5, "SU": 6}
 
@@ -118,17 +126,17 @@ def parse_params(paramstring):
     for param in params:
         if param.strip() == "":
             continue  # skip blanks
-        paramval = [i.strip() for i in param.split(':')]
-        funcname = "parse_%s" % paramval[0]
-        if funcname in globals():
-            try:
-                param_dict.append(globals()[funcname](*paramval))
-            except (TypeError, ValueError):
-                continue
+        param = param.split(':')
+        if len(param) == 2:
+            param = (str(param[0]), [int(p) for p in param[1].split(',')])
+            if len(param[1]) == 1:
+                param = (param[0], param[1][0])
+            param_dict.append(param)
     return dict(param_dict)
 
 
-class Rule(models.Model):
+@python_2_unicode_compatible
+class Rule(with_metaclass(ModelBase, *get_model_bases())):
     """
     This defines a rule by which an event will recur.  This is defined by the
     rrule in the dateutil documentation.
@@ -164,10 +172,22 @@ class Rule(models.Model):
     frequency = models.CharField(_("frequency"), choices=freqs, max_length=10)
     params = models.TextField(_("params"), null=True, blank=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = _('rule')
         verbose_name_plural = _('rules')
         app_label = 'events'
+
+    def rrule_frequency(self):
+        compatibiliy_dict = {
+            'DAILY': rrule.DAILY,
+            'MONTHLY': rrule.MONTHLY,
+            'WEEKLY': rrule.WEEKLY,
+            'YEARLY': rrule.YEARLY,
+            'HOURLY': rrule.HOURLY,
+            'MINUTELY': rrule.MINUTELY,
+            'SECONDLY': rrule.SECONDLY
+        }
+        return compatibiliy_dict[self.frequency]
 
     def get_params(self):
         """
@@ -179,6 +199,6 @@ class Rule(models.Model):
             return {}
         return parse_params(self.params)
 
-    def __unicode__(self):
+    def __str__(self):
         """Human readable string for Rule"""
-        return self.name
+        return 'Rule %s params %s' % (self.name, self.params)

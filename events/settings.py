@@ -12,6 +12,8 @@ DEFAULT_SETTINGS = {
     # (and occurrence). Used by check_edit_permission decorator
     # if ob==None we check permission to add occurrence
     'CHECK_PERMISSION_FUNC': lambda ob, user: user.is_authenticated(),
+    'CHECK_EVENT_PERM_FUNC': lambda ob, user: user.is_authenticated(),
+    'CHECK_CALENDAR_PERM_FUNC': lambda ob, user: user.is_authenticated(),
 
     # Callable used to customize the event list given for a calendar and user
     # (e.g. all events on that calendar, those events plus another calendar's events,
@@ -25,6 +27,7 @@ DEFAULT_SETTINGS = {
     'EVENT_RELATION_MODELS': [],
     'CALENDAR_RELATION_MODELS': [],
     'DEFAULT_RULE_ID': 1,
+    'BASE_CLASSES': None,
 }
 
 USER_SETTINGS = DEFAULT_SETTINGS.copy()

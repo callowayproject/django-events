@@ -1,22 +1,30 @@
 # -*- coding: utf-8 -*-
+from __future__ import division, unicode_literals
 import datetime
-from django.conf import settings
-from django.utils import timezone as tz
+
+from six.moves.builtins import object
+from six import with_metaclass
+
 from django.contrib.contenttypes import generic
-from django.db import models
-from django.db.models import Q
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
+from django.db import models
+from django.db.models.base import ModelBase
+from django.db.models import Q
 from django.template.defaultfilters import date, urlencode
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+
 from dateutil import rrule
 
 from bitfield import BitField
 from audience.settings import AUDIENCE_FLAGS
 
-from ..utils import OccurrenceReplacer
 from ..settings import RELATIONS
+from ..utils import get_model_bases
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -26,7 +34,8 @@ class EventManager(models.Manager):
         return EventRelation.objects.get_events_for_object(content_object, distinction, inherit)
 
 
-class Event(models.Model):
+@python_2_unicode_compatible
+class Event(with_metaclass(ModelBase, *get_model_bases())):
     '''
     This model stores meta data for a date.  You can relate this data to many
     other models.
@@ -37,11 +46,15 @@ class Event(models.Model):
         default=31)
     start = models.DateTimeField(_("start"))
     end = models.DateTimeField(_("end"), help_text=_("The end time must be later than the start time."))
-    all_day = models.BooleanField()
+    all_day = models.BooleanField(default=False)
     title = models.CharField(_("title"), max_length=255)
     description = models.TextField(_("description"), null=True, blank=True)
-    creator = models.ForeignKey(AUTH_USER_MODEL, null=True, verbose_name=_("creator"))
-    created_on = models.DateTimeField(_("created on"), default=tz.now)
+    creator = models.ForeignKey(
+        AUTH_USER_MODEL,
+        null=True,
+        verbose_name=_("creator"),
+        related_name='creator')
+    created_on = models.DateTimeField(_("created on"), auto_now_add=True)
     rule = models.ForeignKey(
         'events.Rule',
         null=True, blank=True,
@@ -57,13 +70,13 @@ class Event(models.Model):
         related_name="events")
     objects = EventManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = _('event')
         verbose_name_plural = _('events')
         app_label = 'events'
         get_latest_by = 'start'
 
-    def __unicode__(self):
+    def __str__(self):
         date_format = u'l, %s' % settings.DATE_FORMAT
         return ugettext('%(title)s: %(start)s - %(end)s') % {
             'title': self.title,
@@ -73,7 +86,7 @@ class Event(models.Model):
 
     def save(self, *args, **kwargs):
         # if the event is an all day event then make sure it has the right start and end times
-        if self.all_day == True:
+        if self.all_day:
             self.start = datetime.datetime.combine(self.start, datetime.time.min)
             self.end = datetime.datetime.combine(self.end, datetime.time.max)
         super(Event, self).save(*args, **kwargs)
@@ -106,6 +119,10 @@ class Event(models.Model):
         []
 
         """
+        from events.utils import OccurrenceReplacer
+        if self.pk:
+            # performance booster for occurrences relationship
+            Event.objects.select_related('occurrence').get(pk=self.pk)
         persisted_occurrences = self.occurrence_set.all()
         occ_replacer = OccurrenceReplacer(persisted_occurrences)
         occurrences = self._get_occurrence_list(start, end)
@@ -113,8 +130,7 @@ class Event(models.Model):
         for occ in occurrences:
             # replace occurrences with their persisted counterparts
             if occ_replacer.has_occurrence(occ):
-                p_occ = occ_replacer.get_occurrence(
-                        occ)
+                p_occ = occ_replacer.get_occurrence(occ)
                 # ...but only if they are within this period
                 if p_occ.start < end and p_occ.end >= start:
                     final_occurrences.append(p_occ)
@@ -137,6 +153,8 @@ class Event(models.Model):
         return Occurrence(event=self, start=start, end=end, original_start=start, original_end=end)
 
     def get_occurrence(self, date):
+        if timezone.is_naive(date) and settings.USE_TZ:
+            date = timezone.make_aware(date, timezone.utc)
         rule = self.get_rrule_object()
         if rule:
             next_occurrence = rule.after(date, inc=True)
@@ -158,7 +176,10 @@ class Event(models.Model):
             if self.end_recurring_period and self.end_recurring_period < end:
                 end = self.end_recurring_period
             rule = self.get_rrule_object()
-            o_starts = rule.between(start - difference, end, inc=True)
+            o_starts = []
+            o_starts.append(rule.between(start, end, inc=True))
+            o_starts.append(rule.between(start - (difference // 2), end - (difference // 2), inc=True))
+            o_starts.append(rule.between(start - difference, end - difference, inc=True))
             for o_start in o_starts:
                 o_end = o_start + difference
                 occurrences.append(self._create_occurrence(o_start, o_end))
@@ -177,7 +198,7 @@ class Event(models.Model):
         """
 
         if after is None:
-            after = tz.now()
+            after = timezone.now()
         rule = self.get_rrule_object()
         if rule is None:
             if self.end > after:
@@ -186,7 +207,7 @@ class Event(models.Model):
         date_iter = iter(rule)
         difference = self.end - self.start
         while True:
-            o_start = date_iter.next()
+            o_start = next(date_iter)
             if self.end_recurring_period and o_start > self.end_recurring_period:
                 raise StopIteration
             o_end = o_start + difference
@@ -198,11 +219,12 @@ class Event(models.Model):
         returns a generator that produces occurrences after the datetime
         ``after``.  Includes all of the persisted Occurrences.
         """
+        from events.utils import OccurrenceReplacer
         occ_replacer = OccurrenceReplacer(self.occurrence_set.all())
         generator = self._occurrences_after_generator(after)
         while True:
-            next = generator.next()
-            yield occ_replacer.get_occurrence(next)
+            next_occurence = next(generator)
+            yield occ_replacer.get_occurrence(next_occurence)
 
 
 if RELATIONS:
@@ -349,7 +371,8 @@ class EventRelationManager(models.Manager):
         return qs.filter(relation_type=relation_type)
 
 
-class EventRelation(models.Model):
+@python_2_unicode_compatible
+class EventRelation(with_metaclass(ModelBase, *get_model_bases())):
     '''
     This is for relating data to an Event, there is also a distinction, so that
     data can be related in different ways.  A good example would be, if you have
@@ -382,27 +405,28 @@ class EventRelation(models.Model):
 
     objects = EventRelationManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("event relation")
         verbose_name_plural = _("event relations")
         app_label = 'events'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s(%s)-%s' % (self.event.title, self.distinction, self.content_object)
 
 
-class Occurrence(models.Model):
+@python_2_unicode_compatible
+class Occurrence(with_metaclass(ModelBase, *get_model_bases())):
     event = models.ForeignKey(Event, verbose_name=_("event"))
     title = models.CharField(_("title"), max_length=255, blank=True, null=True)
     description = models.TextField(_("description"), blank=True, null=True)
     start = models.DateTimeField(_("start"))
     end = models.DateTimeField(_("end"))
-    all_day = models.BooleanField()
+    all_day = models.BooleanField(default=False)
     cancelled = models.BooleanField(_("cancelled"), default=False)
     original_start = models.DateTimeField(_("original start"))
     original_end = models.DateTimeField(_("original end"))
 
-    class Meta:
+    class Meta(object):
         ordering = ('start', )
         verbose_name = _("occurrence")
         verbose_name_plural = _("occurrences")
@@ -410,9 +434,9 @@ class Occurrence(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Occurrence, self).__init__(*args, **kwargs)
-        if self.title is None:
+        if self.title is None and self.event_id:
             self.title = self.event.title
-        if self.description is None:
+        if self.description is None and self.event_id:
             self.description = self.event.description
 
     def moved(self):
@@ -483,23 +507,21 @@ class Occurrence(models.Model):
         """
         current_site = Site.objects.get_current()
         return 'http://' + current_site.domain + reverse("event_ical", args=[
-                self.event.pk,
-                self.start.year,
-                self.start.month,
-                self.start.day,
-                self.start.hour,
-                self.start.minute,
-                ])
+            self.event.pk,
+            self.start.year,
+            self.start.month,
+            self.start.day,
+            self.start.hour,
+            self.start.minute,
+        ])
 
     def webcal_url(self):
-        return self.ics_url()\
-            .replace("http://", "webcal://")\
-            .replace("https://", "webcal://")
+        return self.ics_url().replace("http://", "webcal://").replace("https://", "webcal://")
 
     def gcal_url(self):
         return "http://www.google.com/calendar/render?cid=%s" % urlencode(self.ics_url())
 
-    def __unicode__(self):
+    def __str__(self):
         return ugettext("%(start)s to %(end)s") % {
             'start': self.start,
             'end': self.end,
@@ -511,7 +533,9 @@ class Occurrence(models.Model):
             return cmp(self.end, other.end)
         return rank
 
+    def __lt__(self, other):
+        return self.end < other.end
+
     def __eq__(self, other):
-        if not hasattr(other, 'event'):
-            return False
-        return self.event == other.event and self.original_start == other.original_start and self.original_end == other.original_end
+        return (isinstance(other, Occurrence) and
+                self.original_start == other.original_start and self.original_end == other.original_end)
