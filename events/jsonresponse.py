@@ -1,13 +1,13 @@
 #
 # From http://chronosbox.org/blog/jsonresponse-in-django?lang=en
 
-from django.utils import simplejson
+import json
 from django.utils.encoding import force_unicode
 from django.db.models.base import ModelBase
 from django.http import HttpResponse
 
 
-class LazyJSONEncoder(simplejson.JSONEncoder):
+class LazyJSONEncoder(json.JSONEncoder):
     """
     A JSONEncoder subclass that handle querysets and models objects. Add
     your code about how to handle your type of object here to use when dumping
@@ -35,7 +35,7 @@ class LazyJSONEncoder(simplejson.JSONEncoder):
 
 def serialize_to_json(obj, *args, **kwargs):
     """
-    A wrapper for simplejson.dumps with defaults as:
+    A wrapper for json.dumps with defaults as:
 
     ensure_ascii=False
     cls=LazyJSONEncoder
@@ -45,7 +45,7 @@ def serialize_to_json(obj, *args, **kwargs):
     kwargs['ensure_ascii'] = kwargs.get('ensure_ascii', False)
     kwargs['cls'] = kwargs.get('cls', LazyJSONEncoder)
 
-    return simplejson.dumps(obj, *args, **kwargs)
+    return json.dumps(obj, *args, **kwargs)
 
 
 class JSONResponse(HttpResponse):
@@ -55,7 +55,7 @@ class JSONResponse(HttpResponse):
     def __init__(self, content='', json_opts={}, mimetype="application/json", *args, **kwargs):
         """
         This returns a object that we send as json content using a wrapper to
-        simplejson.dumps method using a custom class to handle models and
+        json.dumps method using a custom class to handle models and
         querysets. Put your options to serialize_to_json in json_opts, other
         options are used by response.
         """
