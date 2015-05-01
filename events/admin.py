@@ -2,7 +2,6 @@ from django.contrib import admin
 from admin_views.admin import AdminViews
 
 from audience.widgets import AdminBitFieldWidget
-from audience.settings import AUDIENCE_FLAGS
 from bitfield import BitField
 
 from .genericcollection import GenericCollectionTabularInline
@@ -45,6 +44,7 @@ class EventAdmin(admin.ModelAdmin):
             'classes': ('collapse', )
         })
     )
+    readonly_fields = ('created_on', )
     inlines = [EventRelationInline]
     form = EventAdminForm
 
@@ -67,7 +67,6 @@ class EventAdmin(admin.ModelAdmin):
 
     formfield_overrides = {
         BitField: {
-            'choices': AUDIENCE_FLAGS,
             'initial': 1,
             'widget': AdminBitFieldWidget()
         }

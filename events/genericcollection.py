@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 
+
 class GenericCollectionInlineModelAdmin(admin.options.InlineModelAdmin):
     ct_field = "content_type"
     ct_fk_field = "object_id"
@@ -11,11 +12,12 @@ class GenericCollectionInlineModelAdmin(admin.options.InlineModelAdmin):
         elements = ["%s: '%s/%s'" % (x, y, z) for x, y, z in ctypes]
         self.content_types = "{%s}" % ",".join(elements)
 
-    def get_formset(self, request, obj=None):
-        result = super(GenericCollectionInlineModelAdmin, self).get_formset(request, obj)
+    def get_formset(self, request, obj=None, **kwargs):
+        result = super(GenericCollectionInlineModelAdmin, self).get_formset(request, obj, **kwargs)
         result.content_types = self.content_types
         result.ct_fk_field = self.ct_fk_field
         return result
+
 
 class GenericCollectionTabularInline(GenericCollectionInlineModelAdmin):
     template = 'admin/edit_inline/gen_coll_tabular.html'

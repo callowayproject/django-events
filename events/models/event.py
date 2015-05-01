@@ -177,9 +177,9 @@ class Event(with_metaclass(ModelBase, *get_model_bases())):
                 end = self.end_recurring_period
             rule = self.get_rrule_object()
             o_starts = []
-            o_starts.append(rule.between(start, end, inc=True))
-            o_starts.append(rule.between(start - (difference // 2), end - (difference // 2), inc=True))
-            o_starts.append(rule.between(start - difference, end - difference, inc=True))
+            o_starts.extend(rule.between(start, end, inc=True))
+            o_starts.extend(rule.between(start - (difference // 2), end - (difference // 2), inc=True))
+            o_starts.extend(rule.between(start - difference, end - difference, inc=True))
             for o_start in o_starts:
                 o_end = o_start + difference
                 occurrences.append(self._create_occurrence(o_start, o_end))
