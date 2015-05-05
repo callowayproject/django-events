@@ -77,8 +77,11 @@ class Period(object):
 
         if hasattr(self.events, 'prefetch_related'):
             self.events = self.events.select_related('calendar').prefetch_related('rule', 'occurrence_set')
-        for event in self.events:
-            event_occurrences = event.get_occurrences(self.utc_start, self.utc_end)
+        else:
+            self.events = self.events.select_related('calendar')
+
+        for event in self.events.all():
+            event_occurrences = event.get_occurrences(self.utc_start, self.utc_end, False)
             occurrences += event_occurrences
         return sorted(occurrences)
 

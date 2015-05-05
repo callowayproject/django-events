@@ -100,7 +100,7 @@ class Event(with_metaclass(ModelBase, *get_model_bases())):
         """
         EventRelation.objects.create_relation(self, obj, distinction)
 
-    def get_occurrences(self, start, end):
+    def get_occurrences(self, start, end, boost=True):
         """
         >>> rule = Rule(frequency = "MONTHLY", name = "Monthly")
         >>> rule.save()
@@ -120,8 +120,9 @@ class Event(with_metaclass(ModelBase, *get_model_bases())):
 
         """
         from events.utils import OccurrenceReplacer
-        if self.pk:
-            # performance booster for occurrences relationship
+        if self.pk and boost:
+            # performance booster for occurrences relationship, unless you have
+            # already selected several in a QuerySet. Then this slows performance.
             Event.objects.select_related('occurrence').get(pk=self.pk)
         persisted_occurrences = self.occurrence_set.all()
         occ_replacer = OccurrenceReplacer(persisted_occurrences)
