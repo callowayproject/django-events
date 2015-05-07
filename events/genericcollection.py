@@ -8,9 +8,15 @@ class GenericCollectionInlineModelAdmin(admin.options.InlineModelAdmin):
 
     def __init__(self, parent_model, admin_site):
         super(GenericCollectionInlineModelAdmin, self).__init__(parent_model, admin_site)
+        from django.core.urlresolvers import reverse, NoReverseMatch
         ctypes = ContentType.objects.all().order_by('id').values_list('id', 'app_label', 'model')
-        elements = ["%s: '%s/%s'" % (x, y, z) for x, y, z in ctypes]
-        self.content_types = "{%s}" % ",".join(elements)
+        elements = {}
+        for x, y, z in ctypes:
+            try:
+                elements[x] = reverse("admin:%s_%s_changelist" % (y, z))
+            except NoReverseMatch:
+                continue
+        self.content_types = "{%s}" % ",".join(["%s: '%s'" % (k, v) for k, v in elements.items()])
 
     def get_formset(self, request, obj=None, **kwargs):
         result = super(GenericCollectionInlineModelAdmin, self).get_formset(request, obj, **kwargs)
