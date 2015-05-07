@@ -25,6 +25,7 @@ class CalendarAdminOptions(AdminViews):
 
 class EventRelationInline(GenericCollectionTabularInline):
     model = EventRelation
+    template = 'admin/edit_inline/ic_coll_tabular.html'
 
 
 class EventAdmin(admin.ModelAdmin):
