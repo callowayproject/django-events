@@ -26,29 +26,29 @@ app.FullCalendarWidget = Backbone.View.extend({
         return this;
     },
     eventClick: function(event, jsEvent, view) {
-        //alert("FullCalendarWidget.eventClick:" + event.id);
+        alert("FullCalendarWidget.eventClick:" + event.id);
     },
     eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
-        // alert(
-        //     event.title + " was moved " +
-        //     dayDelta + " days and " +
-        //     minuteDelta + " minutes."
-        // );
+        alert(
+            event.title + " was moved " +
+            dayDelta + " days and " +
+            minuteDelta + " minutes."
+        );
 
-        // if (allDay) {
-        //     alert("Event is now all-day");
-        // }else{
-        //     alert("Event has a time-of-day");
-        // }
+        if (allDay) {
+            alert("Event is now all-day");
+        }else{
+            alert("Event has a time-of-day");
+        }
     },
     eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
-        // alert("FullCalendarWidget.eventResize: moved:"+dayDelta+" days, "+minuteDelta+"minutes");
+        alert("FullCalendarWidget.eventResize: moved:"+dayDelta+" days, "+minuteDelta+"minutes");
     },
     drop: function(date, allDay) {
-        // alert("Dropped on " + date + " with allDay=" + allDay);
+        alert("Dropped on " + date + " with allDay=" + allDay);
     },
     select: function(startDate, endDate) {
-        // alert("FullCalendarWidget.select: "+startDate+" - "+endDate);
+        alert("FullCalendarWidget.select: "+startDate+" - "+endDate);
     },
     addSource: function(source){
         this.$el.fullCalendar('addEventSource', source);

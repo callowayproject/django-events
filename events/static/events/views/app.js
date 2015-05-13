@@ -39,6 +39,7 @@ app.AppView = Backbone.View.extend({
                 item.loadEvents(view.visStart, view.visEnd);});
     },
     contentDrop: function(date, allDay, jsEvent, ui) {
+        console.log("contentDrop");
         var objectid = ui.helper.data('objectid');
         var contentid = ui.helper.data('contentid');
         var _this = this;
@@ -140,15 +141,26 @@ app.AppView = Backbone.View.extend({
     },
     eventResizeOrDrop: function(event) {
         // for handling both eventResize and eventDrop callbacks
-        if (event.id !== event.event_id) {
-
+        if (event.id !== event.event_id) { }
+        var startDatetime = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm');
+        if (event.end === null && event.allDay) {
+            var endDatetime = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd') + ' 23:59';
+        } else {
+            var endDatetime = $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm');
         }
-
+        var updated_event = {
+            csrftoken: app.getCookie('csrftoken'),
+            id: event.id,
+            start: startDatetime,
+            end: endDatetime,
+            all_day: event.allDay,
+            title: event.title,
+            rule: event.repeating_id
+        };
+        $.post(event.update_url, updated_event);
     },
     eventChange: function(event) {
-        if (event.id !== event.event_id) {
-
-        }
+        if (event.id !== event.event_id) { }
         var updated_event = {
             csrftoken: app.getCookie('csrftoken'),
             id: event.id,
