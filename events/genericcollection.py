@@ -26,7 +26,7 @@ class GenericCollectionInlineModelAdmin(admin.options.InlineModelAdmin):
 
 
 class GenericCollectionTabularInline(GenericCollectionInlineModelAdmin):
-    template = 'admin/edit_inline/gen_coll_tabular.html'
+    template = 'admin/edit_inline/ic_coll_tabular.html'
 
 
 class GenericCollectionStackedInline(GenericCollectionInlineModelAdmin):
