@@ -3,7 +3,7 @@ import re
 from django import template
 from django.contrib.contenttypes.models import ContentType
 
-from ..models import Event, EventRelation
+from ..models import Calendar, Event, EventRelation
 
 register = template.Library()
 
@@ -54,3 +54,25 @@ def get_scheduled_content(parser, token):
     else:
         raise template.TemplateSyntaxError, "%r usage: {%% %r 'app_name.model' [for <date>] as variable_name %%}" % (contents[0], contents[0])
     return ScheduledContentNode(content_type, sched_date, context_var)
+
+
+@register.assignment_tag
+def get_next_scheduled_content(calendar_slug, item_count=1):
+    """
+    {% get_next_occurrences "featured-atlas" as next_atlases %}
+    {% get_next_occurrences "featured-atlas" 2 as next_atlases %}
+
+    Returns an iterator through the next scheduled occurrences starting with now
+    """
+    from django.utils import timezone
+
+    c = Calendar.objects.get(slug='featured-atlas')
+    objs = []
+    ct = 0
+    for i in c.occurrences_after(timezone.now()):
+        ct += 1
+        objs.append(i.event.eventrelation_set.all()[0].content_object)
+        if ct == item_count:
+            break
+    print objs
+    return objs
