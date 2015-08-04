@@ -4,7 +4,7 @@ A calendaring and event management application for Django. Based on django-sched
 __version_info__ = {
     'major': 0,
     'minor': 7,
-    'micro': 2,
+    'micro': 3,
     'releaselevel': 'final',
     'serial': 1
 }

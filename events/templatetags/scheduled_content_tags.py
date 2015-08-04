@@ -74,5 +74,4 @@ def get_next_scheduled_content(calendar_slug, item_count=1):
         objs.append(i.event.eventrelation_set.all()[0].content_object)
         if ct == item_count:
             break
-    print objs
     return objs
