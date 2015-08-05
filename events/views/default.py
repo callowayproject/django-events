@@ -384,9 +384,9 @@ def ajax_edit_occurrence_by_code(request):
             occurrence.save()
             return HttpResponse(serialize_occurrences([occurrence], request.user))
         return JSONError(form.errors)
-    except Exception, e:
-        import traceback
-        traceback.print_exc()
+    except Exception as e:
+        # import traceback
+        # traceback.print_exc()
         return JSONError(e)
 
 
@@ -425,9 +425,9 @@ def ajax_edit_event(request, calendar_slug):
                 event.save()
                 return HttpResponse(serialize_occurrences(event.get_occurrences(event.start, event.end), request.user))
             return JSONError(form.errors)
-    except Exception, e:
-        import traceback
-        traceback.print_exc()
+    except Exception as e:
+        # import traceback
+        # traceback.print_exc()
         return JSONError(e)
 
 

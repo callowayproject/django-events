@@ -101,8 +101,7 @@ def contenttype_list(request):
     for t in valid_types:
         try:
             limits = json.loads(t.limit_choices_to)
-        except Exception as e:
-            print e
+        except Exception:
             limits = False
         if limits:  # A calendar with valid limits, means we need a custom name and id
             ctype_id = '%s_%s' % (t.content_object.id, t.id)
