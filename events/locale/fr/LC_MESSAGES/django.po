@@ -25,11 +25,11 @@ msgstr "PM"
 
 #: forms.py:57
 msgid "The end time must be later than start time."
-msgstr ""
+msgstr "La date de fin doit être après la date de début"
 
 #: forms.py:58 models.py:300
 msgid "This date is ignored for one time only events."
-msgstr ""
+msgstr "Ce champ est ignoré pour les évènements ponctuels"
 
 #: models.py:15
 msgid "Yearly"
@@ -77,11 +77,11 @@ msgstr "params"
 
 #: models.py:58 models.py:299
 msgid "rule"
-msgstr "régle"
+msgstr "règle"
 
 #: models.py:59
 msgid "rules"
-msgstr "régles"
+msgstr "règles"
 
 #: models.py:293
 msgid "start"
@@ -93,7 +93,7 @@ msgstr "fin"
 
 #: models.py:294
 msgid "The end time must be later than the start time."
-msgstr ""
+msgstr "La date de fin doit être après la date de début"
 
 #: models.py:295
 msgid "title"
@@ -105,11 +105,11 @@ msgstr "Créateur"
 
 #: models.py:298
 msgid "created on"
-msgstr ""
+msgstr "Créé le"
 
 #: models.py:299
 msgid "Select '----' for a one time only event."
-msgstr ""
+msgstr "Sélectionnez '----' pour les évènements ponctuels"
 
 #: models.py:300
 msgid "end recurring period"
@@ -125,7 +125,7 @@ msgstr "évènements"
 
 #: models.py:309 periods.py:163 periods.py:216 periods.py:232
 msgid "DATE_FORMAT"
-msgstr ""
+msgstr "DATE_FORMAT"
 
 #: models.py:310
 #, python-format

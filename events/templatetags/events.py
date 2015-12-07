@@ -3,7 +3,7 @@ from django.conf import settings
 from django import template
 from django.core.urlresolvers import reverse
 from django.utils.dateformat import format
-from ..conf.settings import CHECK_PERMISSION_FUNC
+from ..settings import CHECK_PERMISSION_FUNC
 from ..models import Calendar, Rule
 from ..periods import weekday_names, weekday_abbrs
 
@@ -99,7 +99,7 @@ def title(context, occurrence):
 def options(context, occurrence):
     context.update({
         'occurrence': occurrence,
-        'MEDIA_URL': getattr(settings, "MEDIA_URL"),
+        'STATIC_URL': getattr(settings, "STATIC_URL"),
     })
     context['view_occurrence'] = occurrence.get_absolute_url()
     user = context['request'].user
@@ -133,7 +133,7 @@ def can_edit_event(obj, user):
 def create_event_url(context, calendar, slot):
     context.update({
         'calendar': calendar,
-        'MEDIA_URL': getattr(settings, "MEDIA_URL"),
+        'STATIC_URL': getattr(settings, "STATIC_URL"),
     })
     lookup_context = {
         'calendar_slug': calendar.slug,
@@ -266,7 +266,7 @@ def _cook_occurrences(period, occs, width, height):
     """
     last = {}
     # find out which occurrences overlap
-    for o in occs:
+    for o in occs[:]:
         o.data = period.classify_occurrence(o)
         if not o.data:
             occs.remove(o)

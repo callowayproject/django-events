@@ -1,0 +1,149 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>A Quick Overview &mdash; Django Events 0.6b1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6b1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Events 0.6b1 documentation" href="index.html" />
+    <link rel="next" title="Periods" href="periods.html" />
+    <link rel="prev" title="Install" href="install.html" /> 
+  </head>
+  <body>
+<div id="docstitle">
+	<p>Django Events 0.6b1 documentation</p>
+</div>
+<div id="header">
+	<div id="title"><h1>A Quick Overview</h1></div>
+	<ul id="headerButtons">
+		<li id="toc_button"><div class="headerButton"><a href="#">Table of Contents</a></div></li>
+		<li id="page_buttons">
+			<div class="headerButton"><a href="genindex.html" title="General Index" accesskey="I">index</a></div>
+			<div class="headerButton"><a href="periods.html" title="Periods" accesskey="N">next</a></div>
+			<div class="headerButton"><a href="install.html" title="Install" accesskey="P">previous</a></div>
+		</li>
+	</ul>
+</div>
+
+<div id="sphinxsidebar">
+  <div class="sphinxsidebarwrapper">
+	<ul><li class="toctree-l1"><a href="index.html">Main Page</a></li></ul>
+	<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">A Quick Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periods.html">Periods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_tags.html">Useful Template Tags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+
+      <h3>This Page</h3>
+      <ul class="this-page-menu">
+        <li><a href="_sources/overview.txt"
+               rel="nofollow">Show Source</a></li>
+      </ul>
+    <div id="searchbox" style="display: none">
+      
+        <form class="search" action="search.html" method="get">
+			<div class="search-wrapper">
+			<span class="search-left"></span>
+			<input class="prettysearch" type="text" name="q" size="18" />
+			<span class="search-right">&nbsp;</span>
+			</div>
+          <input type="submit" value="Search" class="searchbutton" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+        <p class="searchtip" style="font-size: 90%">
+        Enter search terms or a module, class or function name.
+        </p>
+    </div>
+    <script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+</div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="a-quick-overview">
+<h1>A Quick Overview<a class="headerlink" href="#a-quick-overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-an-event">
+<h2>What is an Event?<a class="headerlink" href="#what-is-an-event" title="Permalink to this headline">¶</a></h2>
+<p>An event doesn&#8217;t have any date or time associated with it just a rule for how it recurs. In a way it designates a set of occurrences.  A weekly staff meeting is a perfect example.  A weekly staff meeting is an event, it says what it is and how often it recurs.  Now if we were to say Tuesday&#8217;s staff meeting, thats an occurrence. That is an a specific element in the set of occurrences designated by weekly staff meeting.</p>
+<p>There is an exception, and that is the &#8220;one-time&#8221; event. If your boss calls and sets up an meeting today at 3. Thats a one-time event. Its only going to happen this one time. That doesn&#8217;t mean its an occurrence. It just means that its an event which represents a set of occurrences that only has one occurrence in it.</p>
+</div>
+<div class="section" id="what-is-an-occurrence">
+<h2>What is an Occurrence?<a class="headerlink" href="#what-is-an-occurrence" title="Permalink to this headline">¶</a></h2>
+<p>An occurrence is an instance of an event.  If we have an event and it is Weekly staff meetings which occur every tuesday then next Tuesday&#8217;s staff meeting is an occurrence.</p>
+</div>
+<div class="section" id="what-does-persisted-occurrences-mean">
+<h2>What does persisted Occurrences mean?<a class="headerlink" href="#what-does-persisted-occurrences-mean" title="Permalink to this headline">¶</a></h2>
+<p>Occurrences are generated programatically. This is because we can not store all of the occurrences in the database, because there could be infinite occurrences. But we still want to be able to persist data about occurrences. Like, canceling an occurrence, moving an occurrence, storing a list of attendees with the occurrence.  This is done lazily. An occurrence is generated programatically until it needs to be saved to the database. When you use any function to get an occurrence, it will be completely transparent whether it was generated programatically or whether it is persisted (except that persisted ones will have a <tt class="docutils literal"><span class="pre">pk</span></tt>).  Just treat them like they are persisted and you shouldn&#8217;t run into any trouble.</p>
+</div>
+<div class="section" id="what-is-a-rule">
+<h2>What is a Rule?<a class="headerlink" href="#what-is-a-rule" title="Permalink to this headline">¶</a></h2>
+<p>A rule defines how and event will recur. You can load a set default rules using the <tt class="docutils literal"><span class="pre">load_default_rules</span></tt> management command: <tt class="docutils literal"><span class="pre">./manage.py</span> <span class="pre">load_default_rules</span></tt></p>
+</div>
+<div class="section" id="accessing-occurrences-with-an-event">
+<h2>Accessing Occurrences with an Event<a class="headerlink" href="#accessing-occurrences-with-an-event" title="Permalink to this headline">¶</a></h2>
+<p>Because some Event can recur indefinitely, you can not have a function like,
+<tt class="docutils literal"><span class="pre">event.get_all_occurrences()</span></tt>, because that would be an infinite list.  So, there are two ways of getting occurrences given an event.</p>
+<div class="section" id="get-occurrences-start-end">
+<h3><tt class="docutils literal"><span class="pre">get_occurrences(start,</span> <span class="pre">end)</span></tt><a class="headerlink" href="#get-occurrences-start-end" title="Permalink to this headline">¶</a></h3>
+<p>This gives you a list of all occurrences that occur inclusively after start and exclusively before end.  When we say occur, that means that they exist at all between start and end. If occurrence ends 10 seconds after <tt class="docutils literal"><span class="pre">start</span></tt> then it will be in the list, and if an occurrence starts 10 seconds before <tt class="docutils literal"><span class="pre">end</span></tt> then it will also be in the list.</p>
+</div>
+<div class="section" id="occurrences-after-after">
+<h3><tt class="docutils literal"><span class="pre">occurrences_after(after)</span></tt><a class="headerlink" href="#occurrences-after-after" title="Permalink to this headline">¶</a></h3>
+<p>This method produces a generator that generates events inclusively after the given datetime <tt class="docutils literal"><span class="pre">after</span></tt>.  If no date is given then it uses now.</p>
+</div>
+</div>
+<div class="section" id="accessing-occurrences-from-lists-of-events">
+<h2>Accessing Occurrences from lists of Events<a class="headerlink" href="#accessing-occurrences-from-lists-of-events" title="Permalink to this headline">¶</a></h2>
+<p>You are often going to have a list of events and want to get occurrences from them.  To do this you can use Periods, and EventListManagers.</p>
+</div>
+</div>
+
+
+          </div> 
+        </div>
+      </div>
+    <div class="footer">
+    <p>
+      &copy; Copyright 2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+	</p>
+    </div>
+      <div class="clearer"></div>
+    </div>
+	<div id="breadcrumbs">
+		A Quick Overview
+		</ul>
+	</div>
+	<script type="text/javascript" charset="utf-8" src="_static/toc.js"></script>
+  </body>
+</html>

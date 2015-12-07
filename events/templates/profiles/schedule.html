@@ -17,7 +17,7 @@
         </tr>
     </thead>
     <tbody>
-    {% for event in calendar.event_set.all %}
+    {% for event in calendar.events.all %}
         <tr>
             <td>{{ event.start }}</td>
             <td>{{ event.end }}</td>
@@ -25,14 +25,14 @@
             <td>
                 {% block schedule_event_controls %}
                 <a href="{% url 'event' event.pk %}" title="{% trans "Event details" %} {{ event }}">
-                    <img src="{{ settings.MEDIA_URL }}icons/time_go.png" alt="{% trans "Event details" %}" />
+                    <img src="{{ settings.STATIC_URL }}icons/time_go.png" alt="{% trans "Event details" %}" />
                 </a>
                 {% ifequal request.user other_user %}
                 <a href="{% url 'edit_event' calendar.slug event.pk %}" title="{% trans "Edit event" %} {{ event }}">
-                    <img src="{{ settings.MEDIA_URL }}icons/time_edit.png" alt="{% trans "Edit event" %}" />
+                    <img src="{{ settings.STATIC_URL }}icons/time_edit.png" alt="{% trans "Edit event" %}" />
                 </a>
                 <a href="{% url 'delete_event' event.pk %}" title="{% trans "Delete event" %} {{ event }}">
-                    <img src="{{ settings.MEDIA_URL }}icons/time_delete.png" alt="{% trans "Delete event" %}" />
+                    <img src="{{ settings.STATIC_URL }}icons/time_delete.png" alt="{% trans "Delete event" %}" />
                 </a>
                 {% endifequal %}
                 {% endblock schedule_event_controls %}

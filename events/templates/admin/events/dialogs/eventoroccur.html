@@ -1,0 +1,51 @@
+<html>
+<head>
+<script type="text/html" id="preview_dialog_tmpl">
+<div style="display:none;" id="preview_dialog">
+    <h1><%= event.title %></h1>
+    <h2><% if (event.allDay) {
+            $.fullCalendar.formatDates(event.start, event.end, "ddd, MMM d{[ - ddd, MMM d]}")
+        } else {
+            $.fullCalendar.formatDates(event.start, event.end, "ddd, MMM d h:mm[ tt] - {[ddd, MMM d ]h:mm tt }")
+        } %>
+    <p><%= event.description %></p>
+</div>
+</script>
+<style type="text/css">
+body {
+    font-size: 12px;
+font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+}
+.event-container {
+    z-index: 9;
+    background-color: rgb(172, 114, 94);
+    border: 1px solid rgb(117, 72, 30);
+    width: 114.85px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: .85em;
+    padding: 0 5px;
+}
+.event-container h1 {
+    font-size: 1.1em;
+}
+.event-container h2 {
+    font-size: 1em;
+}
+</style>
+</head>
+<body>
+<div class="event-container">
+    <h1>Hangar Dance  North</h1>
+    <h2>Sat, June 1, 6 - 9pm</h2>
+    <p>I want to make sure all of our MNDSS friends know about this great event. Its almost like being part of a Hollywood production.</p>
+    <div class="button-group">
+        <button>Edit this occurrence</button>
+        <button>Edit all occurrences</button>
+        <hr>
+        <button>Delete this occurrence</button>
+        <button>Delete all occurrences</button>
+    </div>
+</div>
+</body>
+</html>

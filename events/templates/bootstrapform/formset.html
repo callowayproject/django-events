@@ -1,0 +1,56 @@
+{% load i18n admin_static admin_modify %}
+<div class="inline-group" id="{{ formset.prefix }}-group">
+  <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
+    {{ formset.management_form }}
+    <fieldset class="module">
+      {{ formset.non_form_errors }}
+      <table>
+        <thead><tr>
+          {% for field in formset.forms.0.visible_fields %}
+              <th{% if forloop.first %} colspan="2"{% endif %}{% if field.required %} class="required"{% endif %}>{{ field.label|capfirst }}
+              {% if field.help_text %}&nbsp;<img src="{% static "admin/img/icon-unknown.gif" %}" class="help help-tooltip" width="10" height="10" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}" />{% endif %}
+              </th>
+          {% endfor %}
+        </tr></thead>
+        <tbody>
+          {% for form in formset.forms %}
+          {% if form.non_field_errors %}
+              <tr><td colspan="{{ form }}">{{ form.non_field_errors }}</td></tr>
+          {% endif %}
+          <tr class="form-row {% cycle "row1" "row2" %}{% if forloop.last %} empty-form{% endif %}" id="{{ formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+            <td class="original">
+              {% if form.has_auto_field %}{{ form.pk_field.field }}{% endif %}
+              {{ form.fk_field.field }}
+              {% spaceless %}
+                  {% for field in form.hidden_fields %}
+                    {% if field.is_hidden %} {{ field }} {% endif %}
+                  {% endfor %}
+              {% endspaceless %}
+            </td>
+                {% for field in form.visible_fields %}
+                  <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %}>
+                    {% if field.is_readonly %}
+                      <p>{{ field.contents }}</p>
+                    {% else %}
+                      {{ field.field.errors.as_ul }}
+                      {{ field }}
+                      {% ifequal field.name formset.ct_fk_field %}
+                          <a id="lookup_id_{{field.field.html_name}}" class="related-lookup" onclick="return showGenericRelatedObjectLookupPopup(this, {{ formset.formset.content_types }});" href="#">
+                              <img width="16" height="16" alt="Lookup" src="{{ STATIC_URL }}admin/img/selector-search.gif"/>
+                          </a>
+                      {% endifequal %}
+                    {% endif %}
+                  </td>
+                {% endfor %}
+            {% if formset.formset.can_delete %}
+              <td class="delete">
+                {% if form.original %}{{ form.deletion_field.field }}{% endif %}
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </fieldset>
+  </div>
+</div>

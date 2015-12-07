@@ -1,0 +1,237 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Periods &mdash; Django Events 0.6b1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6b1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Events 0.6b1 documentation" href="index.html" />
+    <link rel="next" title="Utilities" href="utils.html" />
+    <link rel="prev" title="A Quick Overview" href="overview.html" /> 
+  </head>
+  <body>
+<div id="docstitle">
+	<p>Django Events 0.6b1 documentation</p>
+</div>
+<div id="header">
+	<div id="title"><h1>Periods</h1></div>
+	<ul id="headerButtons">
+		<li id="toc_button"><div class="headerButton"><a href="#">Table of Contents</a></div></li>
+		<li id="page_buttons">
+			<div class="headerButton"><a href="genindex.html" title="General Index" accesskey="I">index</a></div>
+			<div class="headerButton"><a href="utils.html" title="Utilities" accesskey="N">next</a></div>
+			<div class="headerButton"><a href="overview.html" title="A Quick Overview" accesskey="P">previous</a></div>
+		</li>
+	</ul>
+</div>
+
+<div id="sphinxsidebar">
+  <div class="sphinxsidebarwrapper">
+	<ul><li class="toctree-l1"><a href="index.html">Main Page</a></li></ul>
+	<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">A Quick Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Periods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_tags.html">Useful Template Tags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+
+      <h3>This Page</h3>
+      <ul class="this-page-menu">
+        <li><a href="_sources/periods.txt"
+               rel="nofollow">Show Source</a></li>
+      </ul>
+    <div id="searchbox" style="display: none">
+      
+        <form class="search" action="search.html" method="get">
+			<div class="search-wrapper">
+			<span class="search-left"></span>
+			<input class="prettysearch" type="text" name="q" size="18" />
+			<span class="search-right">&nbsp;</span>
+			</div>
+          <input type="submit" value="Search" class="searchbutton" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+        <p class="searchtip" style="font-size: 90%">
+        Enter search terms or a module, class or function name.
+        </p>
+    </div>
+    <script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+</div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="periods">
+<h1>Periods<a class="headerlink" href="#periods" title="Permalink to this headline">¶</a></h1>
+<p>One of the goals of Django Events is to make occurrence generation and persistence easy.  To do this it creates simple classes for accessing these
+occurrences.  These are Periods.  Period is an object that is initiated with an iterable object of events, a start datetime, and an end datetime.</p>
+<p>It is common to subclass Period for common periods of time.  Some of these already exist in the project.  Year, Month, Week, Day</p>
+<p>Expect more in the future: Hour, HalfHour</p>
+<div class="section" id="period-base-class">
+<h2>Period Base Class<a class="headerlink" href="#period-base-class" title="Permalink to this headline">¶</a></h2>
+<p>This is the base class from which all other periods inherit.  It contains all
+of the base functionality for retrieving occurrences.  It is instantiated with
+a list of events, a start date, and an end date. <em>The start date is inclusive,
+the end date is exclusive.</em> ie [start, end)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Period</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="section" id="get-occurrences">
+<h3><tt class="docutils literal"><span class="pre">get_occurrences()</span></tt><a class="headerlink" href="#get-occurrences" title="Permalink to this headline">¶</a></h3>
+<p>This method is for getting the occurrences from the list of passed in events. It returns the occurrences that exist in the period for every event.  If I have a list of events <tt class="docutils literal"><span class="pre">my_events</span></tt>, and I want to know all of the occurrences from today to next week I simply create a Period object and then call get_occurrences. It will return a sorted list of Occurrences.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="n">this_week</span> <span class="o">=</span> <span class="n">Period</span><span class="p">(</span><span class="n">my_events</span><span class="p">,</span> <span class="n">today</span><span class="p">,</span> <span class="n">today</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">this_week</span><span class="o">.</span><span class="n">get_occurrences</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="classify-occurrence-occurrence">
+<h3><tt class="docutils literal"><span class="pre">classify_occurrence(occurrence)</span></tt><a class="headerlink" href="#classify-occurrence-occurrence" title="Permalink to this headline">¶</a></h3>
+<p>You use this method to determine how the occurrence relates to the period. This method returns a dictionary. The keys are <tt class="docutils literal"><span class="pre">class</span></tt>, <tt class="docutils literal"><span class="pre">occurrence</span></tt> and <tt class="docutils literal"><span class="pre">all_day</span></tt>. The <tt class="docutils literal"><span class="pre">all_day</span></tt> key is a boolean that is <tt class="docutils literal"><span class="pre">True</span></tt> if the occurrence is an all day event and is <tt class="docutils literal"><span class="pre">False</span></tt> if the occurrence is not an all day event.  The <tt class="docutils literal"><span class="pre">class</span></tt> key returns a number from 0 to 3 and the occurrence key returns the occurrence.</p>
+<p>Classes:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">0 - Only started during this period.</div>
+<div class="line">1 - Started and ended during this period.</div>
+<div class="line">2 - Didn&#8217;t start or end in this period, but does exist during this period.</div>
+<div class="line">3 - Only ended during this period.</div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="get-occurrence-partials">
+<h3><tt class="docutils literal"><span class="pre">get_occurrence_partials()</span></tt><a class="headerlink" href="#get-occurrence-partials" title="Permalink to this headline">¶</a></h3>
+<p>This method is used for getting all the occurrences, but getting them as classified occurrences.  Simply it runs classify_occurrence on each occurrence in get_occurrence and returns that list.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="n">this_week</span> <span class="o">=</span> <span class="n">Period</span><span class="p">(</span><span class="n">my_events</span><span class="p">,</span> <span class="n">today</span><span class="p">,</span> <span class="n">today</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">this_week</span><span class="o">.</span><span class="n">get_occurrences</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="n">classified_occurrence</span><span class="p">[</span><span class="s">&#39;occurrence&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">classified_occurrence</span> <span class="ow">in</span> <span class="n">this_week</span><span class="o">.</span><span class="n">get_occurrence_partials</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="has-occurrence">
+<h3><tt class="docutils literal"><span class="pre">has_occurrence()</span></tt><a class="headerlink" href="#has-occurrence" title="Permalink to this headline">¶</a></h3>
+<p>This method returns whether there are any occurrences in this period</p>
+</div>
+</div>
+<div class="section" id="year">
+<h2>Year<a class="headerlink" href="#year" title="Permalink to this headline">¶</a></h2>
+<p>The year period is instaniated with a list of events and a date or datetime object. It will resemble the year in which that date exists.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Year</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">start</span>
+<span class="go">datetime.datetime(2008, 1, 1, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">end</span>
+<span class="go">datetime.datetime(2009, 1, 1, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">Remember</span> <span class="n">start</span> <span class="ow">is</span> <span class="n">inclusive</span> <span class="ow">and</span> <span class="n">end</span> <span class="ow">is</span> <span class="n">exclusive</span>
+</pre></div>
+</div>
+<div class="section" id="get-months">
+<h3><tt class="docutils literal"><span class="pre">get_months()</span></tt><a class="headerlink" href="#get-months" title="Permalink to this headline">¶</a></h3>
+<p>This function returns 12 Month objects which resemble the 12 months in the Year period.</p>
+</div>
+</div>
+<div class="section" id="month">
+<h2>Month<a class="headerlink" href="#month" title="Permalink to this headline">¶</a></h2>
+<p>The Month period is instantiated with a list of events and a date or  datetime object.  It resembles the month that contains the date or datetime object that was passed in.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Month</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">start</span>
+<span class="go">datetime.datetime(2008, 4, 1, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">end</span>
+<span class="go">datetime.datetime(2008, 5, 1, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">Remember</span> <span class="n">start</span> <span class="ow">is</span> <span class="n">inclusive</span> <span class="ow">and</span> <span class="n">end</span> <span class="ow">is</span> <span class="n">exclusive</span>
+</pre></div>
+</div>
+<div class="section" id="get-weeks">
+<h3><tt class="docutils literal"><span class="pre">get_weeks()</span></tt><a class="headerlink" href="#get-weeks" title="Permalink to this headline">¶</a></h3>
+<p>This method returns a list of Week objects that occur at all during that month.  The week does not have to be fully encapsulated in the month just have
+exist in the month at all</p>
+</div>
+<div class="section" id="get-days">
+<h3><tt class="docutils literal"><span class="pre">get_days()</span></tt><a class="headerlink" href="#get-days" title="Permalink to this headline">¶</a></h3>
+<p>This method returns a list of Day objects that occur during the month.</p>
+</div>
+<div class="section" id="get-day-day-number">
+<h3><tt class="docutils literal"><span class="pre">get_day(day_number)</span></tt><a class="headerlink" href="#get-day-day-number" title="Permalink to this headline">¶</a></h3>
+<p>This method returns a specific day in a year given its day number.</p>
+</div>
+</div>
+<div class="section" id="week">
+<h2>Week<a class="headerlink" href="#week" title="Permalink to this headline">¶</a></h2>
+<p>The Week period is instantiated with a list of events and a date or  datetime object.  It resembles the week that contains the date or datetime object that was passed in.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Week</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">start</span>
+<span class="go">datetime.datetime(2008, 3, 30, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">end</span>
+<span class="go">datetime.datetime(2008, 4, 6, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">Remember</span> <span class="n">start</span> <span class="ow">is</span> <span class="n">inclusive</span> <span class="ow">and</span> <span class="n">end</span> <span class="ow">is</span> <span class="n">exclusive</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3><tt class="docutils literal"><span class="pre">get_days()</span></tt><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>This method returns the 7 Day objects that represent the days in a Week period.</p>
+</div>
+</div>
+<div class="section" id="day">
+<h2>Day<a class="headerlink" href="#day" title="Permalink to this headline">¶</a></h2>
+<p>The Day period is instantiated with a list of events and a date or  datetime object.  It resembles the day that contains the date or datetime object that was passed in.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Day</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">start</span>
+<span class="go">datetime.datetime(2008, 4, 1, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">end</span>
+<span class="go">datetime.datetime(2008, 4, 2, 0, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">Remember</span> <span class="n">start</span> <span class="ow">is</span> <span class="n">inclusive</span> <span class="ow">and</span> <span class="n">end</span> <span class="ow">is</span> <span class="n">exclusive</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div> 
+        </div>
+      </div>
+    <div class="footer">
+    <p>
+      &copy; Copyright 2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+	</p>
+    </div>
+      <div class="clearer"></div>
+    </div>
+	<div id="breadcrumbs">
+		Periods
+		</ul>
+	</div>
+	<script type="text/javascript" charset="utf-8" src="_static/toc.js"></script>
+  </body>
+</html>

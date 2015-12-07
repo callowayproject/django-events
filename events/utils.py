@@ -1,10 +1,13 @@
 import datetime
 import heapq
-from django.contrib.contenttypes.models import ContentType
+from six.moves.builtins import object
+from functools import wraps
+from django.utils import timezone
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.template import Context, loader
-from events.conf.settings import CHECK_PERMISSION_FUNC
+from django.utils.module_loading import import_string
+from .settings import CHECK_PERMISSION_FUNC, CHECK_EVENT_PERM_FUNC, CHECK_CALENDAR_PERM_FUNC
 
 
 class EventListManager(object):
@@ -25,7 +28,7 @@ class EventListManager(object):
         """
         from events.models import Occurrence
         if after is None:
-            after = datetime.datetime.now()
+            after = timezone.now()
         occ_replacer = OccurrenceReplacer(
             Occurrence.objects.filter(event__in=self.events))
         generators = [event._occurrences_after_generator(after) for event in self.events]
@@ -44,10 +47,10 @@ class EventListManager(object):
             generator = occurrences[0][1]
 
             try:
-                next = heapq.heapreplace(occurrences, (generator.next(), generator))[0]
+                next_occurance = heapq.heapreplace(occurrences, (next(generator), generator))[0]
             except StopIteration:
-                next = heapq.heappop(occurrences)[0]
-            yield occ_replacer.get_occurrence(next)
+                next_occurance = heapq.heappop(occurrences)[0]
+            yield occ_replacer.get_occurrence(next_occurance)
 
 
 class OccurrenceReplacer(object):
@@ -58,7 +61,7 @@ class OccurrenceReplacer(object):
     the generated ones that are equivalent.  This class makes this easier.
     """
     def __init__(self, persisted_occurrences):
-        lookup = [((occ.event, occ.original_start, occ.original_end), occ) for
+        lookup = [((occ.event_id, occ.original_start, occ.original_end), occ) for
             occ in persisted_occurrences]
         self.lookup = dict(lookup)
 
@@ -68,11 +71,11 @@ class OccurrenceReplacer(object):
         has already been matched
         """
         return self.lookup.pop(
-            (occ.event, occ.original_start, occ.original_end),
+            (occ.event_id, occ.original_start, occ.original_end),
             occ)
 
     def has_occurrence(self, occ):
-        return (occ.event, occ.original_start, occ.original_end) in self.lookup
+        return (occ.event_id, occ.original_start, occ.original_end) in self.lookup
 
     def get_additional_occurrences(self, start, end):
         """
@@ -81,23 +84,34 @@ class OccurrenceReplacer(object):
         return [occ for key, occ in self.lookup.items() if (occ.start < end and occ.end >= start and not occ.cancelled)]
 
 
-class check_event_permissions(object):
-
-    def __init__(self, f):
-        self.f = f
-        self.contenttype = ContentType.objects.get(app_label='events', model='event')
-
-    def __call__(self, request, *args, **kwargs):
+def check_event_permissions(function):
+    @wraps(function)
+    def decorator(request, *args, **kwargs):
+        from schedule.models import Event, Calendar
         user = request.user
-        object_id = kwargs.get('event_id', None)
+        # check event permission
         try:
-            obj = self.contenttype.get_object_for_this_type(pk=object_id)
-        except self.contenttype.model_class().DoesNotExist:
-            obj = None
-        allowed = CHECK_PERMISSION_FUNC(obj, user)
+            event = Event.objects.get(pk=kwargs.get('event_id', None))
+        except Event.DoesNotExist:
+            event = None
+        allowed = CHECK_EVENT_PERM_FUNC(event, user)
         if not allowed:
             return HttpResponseRedirect(settings.LOGIN_URL)
-        return self.f(request, *args, **kwargs)
+
+        # check calendar permissions
+        calendar = None
+        if event:
+            calendar = event.calendar
+        elif 'calendar_slug' in kwargs:
+            calendar = Calendar.objects.get(slug=kwargs['calendar_slug'])
+        allowed = CHECK_CALENDAR_PERM_FUNC(calendar, user)
+        if not allowed:
+            return HttpResponseRedirect(settings.LOGIN_URL)
+
+        # all checks passed
+        return function(request, *args, **kwargs)
+
+    return decorator
 
 
 def coerce_date_dict(date_dict):
@@ -109,21 +123,22 @@ def coerce_date_dict(date_dict):
     of the parts are found return an empty tuple.
     """
     keys = ['year', 'month', 'day', 'hour', 'minute', 'second']
-    retVal = {
-                'year': 1,
-                'month': 1,
-                'day': 1,
-                'hour': 0,
-                'minute': 0,
-                'second': 0}
+    ret_val = {
+        'year': 1,
+        'month': 1,
+        'day': 1,
+        'hour': 0,
+        'minute': 0,
+        'second': 0,
+        'tzinfo': timezone.utc}
     modified = False
     for key in keys:
         try:
-            retVal[key] = int(date_dict[key])
+            ret_val[key] = int(date_dict[key])
             modified = True
         except KeyError:
             break
-    return modified and retVal or {}
+    return modified and ret_val or {}
 
 
 occtimeformat = 'ST%Y%m%d%H%M%S'
@@ -186,3 +201,50 @@ def serialize_occurrences(occurrences, user):
     rnd = loader.get_template('events/occurrences_json.html')
     resp = rnd.render(Context({'occurrences': occ_list}))
     return resp
+
+
+def model_to_dict(instance, fields=None, exclude=None):
+    """
+    Customized from Django's to do things recursively
+
+    Returns a dict containing the data in ``instance`` suitable for passing as
+    a Form's ``initial`` keyword argument.
+
+    ``fields`` is an optional list of field names. If provided, only the named
+    fields will be included in the returned dict.
+
+    ``exclude`` is an optional list of field names. If provided, the named
+    fields will be excluded from the returned dict, even if they are listed in
+    the ``fields`` argument.
+    """
+    # avoid a circular import
+    from django.db.models.fields.related import ManyToManyField
+    opts = instance._meta
+    data = {}
+    for f in sorted(getattr(opts, 'concrete_fields', opts.fields) + opts.many_to_many):
+        if fields and f.name not in fields:
+            continue
+        if exclude and f.name in exclude:
+            continue
+        if isinstance(f, ManyToManyField):
+            # If the object doesn't have a primary key yet, just use an empty
+            # list for its m2m fields. Calling f.value_from_object will raise
+            # an exception.
+            if instance.pk is None:
+                data[f.name] = []
+            else:
+                # MultipleChoiceWidget needs a list of pks, not object instances.
+                data[f.name] = list(f.value_from_object(instance).values())
+        else:
+            data[f.name] = f.value_from_object(instance)
+    return data
+
+
+def get_model_bases():
+    from .settings import BASE_CLASSES
+    from django.db.models import Model
+
+    if BASE_CLASSES is None:
+        return [Model]
+    else:
+        return [import_string(x) for x in BASE_CLASSES]

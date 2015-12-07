@@ -1,0 +1,6 @@
+description "{branchname}"
+start on runlevel [2345]
+stop on runlevel [06]
+respawn
+respawn limit 10 5
+exec /home/natgeo/sites/education/{branchname}/example/start_gunicorn.sh --debug --workers=1

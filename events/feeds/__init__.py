@@ -1,10 +1,10 @@
+from django.utils import timezone as tz
 from events.models import Calendar
 from django.contrib.syndication.views import FeedDoesNotExist
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from events.feeds.icalendar import ICalendarFeed
-import datetime
 import itertools
 
 
@@ -25,7 +25,7 @@ class UpcomingEventsFeed(Feed):
         return obj.get_absolute_url()
 
     def items(self, obj):
-        return itertools.islice(obj.occurrences_after(datetime.datetime.now()),
+        return itertools.islice(obj.occurrences_after(tz.now()),
             getattr(settings, "FEED_LIST_LENGTH", 10))
 
     def item_id(self, item):

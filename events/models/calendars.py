@@ -1,13 +1,24 @@
 # -*- coding: utf-8 -*-
-from django.contrib.contenttypes import generic
+from __future__ import unicode_literals
+from six.moves.builtins import str
+from six.moves.builtins import object
+from six import with_metaclass
+import datetime
+import pytz
+
 from django.db import models
+from django.db.models.base import ModelBase
 from django.db.models import Q
+from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
-import datetime
-from ..utils import EventListManager
+from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+
+from events.utils import EventListManager, get_model_bases
+from events.settings import CALENDAR_RELATIONS
 
 
 class CalendarManager(models.Manager):
@@ -56,9 +67,9 @@ class CalendarManager(models.Manager):
         """
         calendar_list = self.get_calendars_for_object(obj, distinction)
         if len(calendar_list) == 0:
-            raise Calendar.DoesNotExist, "Calendar does not exist."
+            raise Calendar.DoesNotExist("Calendar does not exist.")
         elif len(calendar_list) > 1:
-            raise AssertionError, "More than one calendars were found."
+            raise AssertionError("More than one calendar were found.")
         else:
             return calendar_list[0]
 
@@ -74,7 +85,7 @@ class CalendarManager(models.Manager):
             return self.get_calendar_for_object(obj, distinction)
         except Calendar.DoesNotExist:
             if name is None:
-                calendar = Calendar(name=unicode(obj))
+                calendar = Calendar(name=str(obj))
             else:
                 calendar = Calendar(name=name)
             calendar.slug = slugify(calendar.name)
@@ -97,7 +108,8 @@ class CalendarManager(models.Manager):
         return self.filter(dist_q, Q(calendarrelation__object_id=obj.id, calendarrelation__content_type=ct))
 
 
-class Calendar(models.Model):
+@python_2_unicode_compatible
+class Calendar(with_metaclass(ModelBase, *get_model_bases())):
     '''
     This is for grouping events so that batch relations can be made to all
     events.  An example would be a project calendar.
@@ -136,17 +148,17 @@ class Calendar(models.Model):
     slug = models.SlugField(_("slug"), max_length=200, unique=True)
     objects = CalendarManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = _('calendar')
         verbose_name_plural = _('calendar')
         app_label = 'events'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
+    @property
     def events(self):
-        return self.event_set.all()
-    events = property(events)
+        return self.event_set
 
     def create_relation(self, obj, distinction=None, inheritable=True):
         """
@@ -157,7 +169,7 @@ class Calendar(models.Model):
         """
         CalendarRelation.objects.create_relation(self, obj, distinction, inheritable)
 
-    def get_recent(self, amount=5, in_datetime=datetime.datetime.now):
+    def get_recent(self, amount=5, in_datetime=datetime.datetime.now, tzinfo=pytz.utc):
         """
         This shortcut function allows you to get events that have started
         recently.
@@ -168,7 +180,7 @@ class Calendar(models.Model):
         in_datetime is the datetime you want to check against.  It defaults to
         datetime.datetime.now
         """
-        return self.events.order_by('-start').filter(start__lt=datetime.datetime.now())[:amount]
+        return self.events.order_by('-start').filter(start__lt=timezone.now())[:amount]
 
     def occurrences_after(self, date=None):
         return EventListManager(self.events.all()).occurrences_after(date)
@@ -178,6 +190,12 @@ class Calendar(models.Model):
 
     def add_event_url(self):
         return reverse('s_create_event_in_calendar', args=[self.slug])
+
+
+if CALENDAR_RELATIONS:
+    relation_limits = reduce(lambda x, y: x | y, CALENDAR_RELATIONS)
+else:
+    relation_limits = {}
 
 
 class CalendarRelationManager(models.Manager):
@@ -198,8 +216,17 @@ class CalendarRelationManager(models.Manager):
         cr.save()
         return cr
 
+    def get_content_type(self, content_type):
+        qs = self.get_query_set()
+        return qs.filter(content_type__name=content_type)
 
-class CalendarRelation(models.Model):
+    def get_relation_type(self, relation_type):
+        qs = self.get_query_set()
+        return qs.filter(relation_type=relation_type)
+
+
+@python_2_unicode_compatible
+class CalendarRelation(with_metaclass(ModelBase, *get_model_bases())):
     '''
     This is for relating data to a Calendar, and possible all of the events for
     that calendar, there is also a distinction, so that the same type or kind of
@@ -222,12 +249,30 @@ class CalendarRelation(models.Model):
     may not scale well.  If you use this, keep that in mind.
     '''
 
-    calendar = models.ForeignKey(Calendar, verbose_name=_("calendar"))
-    content_type = models.ForeignKey(ContentType)
+    calendar = models.ForeignKey(
+        Calendar,
+        verbose_name=_("calendar"),
+        related_name='calendarrelation')
+    content_type = models.ForeignKey(
+        ContentType,
+        limit_choices_to=relation_limits)
     object_id = models.IntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    distinction = models.CharField(_("distinction"), max_length=20, null=True)
-    inheritable = models.BooleanField(_("inheritable"), default=True)
+    distinction = models.CharField(
+        _("distinction"),
+        max_length=20,
+        blank=True, null=True)
+    limit_choices_to = models.TextField(
+        _('limit choices'),
+        default="{}",
+        blank=True, null=True,
+        help_text=_('This field is for filtering the available choices. The '
+                    'content should be a JSON-formatted object. The keys are '
+                    'the field name with optional lookup suffix. The values '
+                    'are the required value for that field.'))
+    inheritable = models.BooleanField(
+        _("inheritable"),
+        default=True)
 
     objects = CalendarRelationManager()
 
@@ -236,5 +281,5 @@ class CalendarRelation(models.Model):
         verbose_name_plural = _('calendar relations')
         app_label = 'events'
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s - %s' % (self.calendar, self.content_object)

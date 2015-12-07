@@ -1,0 +1,473 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Views &mdash; Django Events 0.6b1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6b1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Events 0.6b1 documentation" href="index.html" />
+    <link rel="next" title="Models" href="models.html" />
+    <link rel="prev" title="Useful Template Tags" href="template_tags.html" /> 
+  </head>
+  <body>
+<div id="docstitle">
+	<p>Django Events 0.6b1 documentation</p>
+</div>
+<div id="header">
+	<div id="title"><h1>Views</h1></div>
+	<ul id="headerButtons">
+		<li id="toc_button"><div class="headerButton"><a href="#">Table of Contents</a></div></li>
+		<li id="page_buttons">
+			<div class="headerButton"><a href="genindex.html" title="General Index" accesskey="I">index</a></div>
+			<div class="headerButton"><a href="models.html" title="Models" accesskey="N">next</a></div>
+			<div class="headerButton"><a href="template_tags.html" title="Useful Template Tags" accesskey="P">previous</a></div>
+		</li>
+	</ul>
+</div>
+
+<div id="sphinxsidebar">
+  <div class="sphinxsidebarwrapper">
+	<ul><li class="toctree-l1"><a href="index.html">Main Page</a></li></ul>
+	<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">A Quick Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="periods.html">Periods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_tags.html">Useful Template Tags</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+</ul>
+
+      <h3>This Page</h3>
+      <ul class="this-page-menu">
+        <li><a href="_sources/views.txt"
+               rel="nofollow">Show Source</a></li>
+      </ul>
+    <div id="searchbox" style="display: none">
+      
+        <form class="search" action="search.html" method="get">
+			<div class="search-wrapper">
+			<span class="search-left"></span>
+			<input class="prettysearch" type="text" name="q" size="18" />
+			<span class="search-right">&nbsp;</span>
+			</div>
+          <input type="submit" value="Search" class="searchbutton" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+        <p class="searchtip" style="font-size: 90%">
+        Enter search terms or a module, class or function name.
+        </p>
+    </div>
+    <script type="text/javascript">$('#searchbox').show(0);</script>
+  </div>
+</div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="views">
+<h1>Views<a class="headerlink" href="#views" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="calendar">
+<h2>calendar<a class="headerlink" href="#calendar" title="Permalink to this headline">¶</a></h2>
+<p>This view is for displaying meta_data about calendars. Upcoming events, Name, description and so on and so forth. It should be noted that this is probably not the best view for displaying a calendar in a traditional sense, i.e. displaying a month calendar or a year calendar, as it does not equip the context with any period objects. If you would like to do this you should use calendar_by_period.</p>
+<div class="section" id="required-arguments">
+<h3>Required Arguments<a class="headerlink" href="#required-arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">calendar_slug</span></tt></dt>
+<dd>The slug of the calendar to be displayed</dd>
+</dl>
+</div>
+<div class="section" id="optional-arguments">
+<h3>Optional Arguments<a class="headerlink" href="#optional-arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="context-variables">
+<h3>Context Variables<a class="headerlink" href="#context-variables" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">calendar</span></tt></dt>
+<dd>The Calendar object designated by the <tt class="docutils literal"><span class="pre">calendar_slug</span></tt>.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="calendar-by-period">
+<h2>calendar_by_period<a class="headerlink" href="#calendar-by-period" title="Permalink to this headline">¶</a></h2>
+<p>This view is for getting a calendar, but also getting periods with that
+calendar.  Which periods you get, is designated with the list periods. You
+can designate which date you the periods to be initialized to by passing
+a date in request.GET. See the template tag <tt class="docutils literal"><span class="pre">query_string_for_date</span></tt></p>
+<div class="section" id="id1">
+<h3>Required Arguments<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">calendar_slug</span></tt></dt>
+<dd>The slug of the calendar to be displayed</dd>
+</dl>
+</div>
+<div class="section" id="id2">
+<h3>Optional Arguments<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period    .html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">periods</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd><tt class="docutils literal"><span class="pre">[]</span></tt></dd>
+</dl>
+<p class="last">This is a list of Period Subclasses that designates which periods you would like to instantiate and put in the context</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id3">
+<h3>Context Variables<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">date</span></tt></dt>
+<dd>This was the date that was generated from the query string.</dd>
+<dt><tt class="docutils literal"><span class="pre">periods</span></tt></dt>
+<dd><p class="first">this is a dictionary that returns the periods from the list you passed
+in.  If you passed in Month and Day, then your dictionary would look
+like this</p>
+<div class="highlight-python"><pre>{
+    'month': &lt;schedule.periods.Month object&gt;
+    'day':   &lt;schedule.periods.Day object&gt;
+}</pre>
+</div>
+<p class="last">So in the template to access the Day period in the context you simply
+use <tt class="docutils literal"><span class="pre">periods.day</span></tt>.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">calendar</span></tt></dt>
+<dd>This is the Calendar that is designated by the <tt class="docutils literal"><span class="pre">calendar_slug</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">weekday_names</span></tt></dt>
+<dd>This is for convenience. It returns the local names of weekedays for
+internationalization.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="event">
+<h2>event<a class="headerlink" href="#event" title="Permalink to this headline">¶</a></h2>
+<p>This view is for showing an event. It is important to remember that an
+event is not an occurrence.  Events define a set of reccurring occurrences.
+If you would like to display an occurrence (a single instance of a
+recurring event) use <tt class="docutils literal"><span class="pre">occurrence</span></tt>.</p>
+<div class="section" id="id4">
+<h3>Required Arguments<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">event_id</span></tt></dt>
+<dd>the id of the event to be displayed</dd>
+</dl>
+</div>
+<div class="section" id="id5">
+<h3>Optional Arguments<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id6">
+<h3>Context Variables<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">event</span></tt></dt>
+<dd>This is the event designated by the event_id</dd>
+<dt><tt class="docutils literal"><span class="pre">back_url</span></tt></dt>
+<dd>this is the url that referred to this view.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="occurrence">
+<h2>occurrence<a class="headerlink" href="#occurrence" title="Permalink to this headline">¶</a></h2>
+<p>This view is used to display an occurrence.  There are two methods of
+displaying an occurrence.</p>
+<div class="section" id="id7">
+<h3>Required Arguments<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">event_id</span></tt></dt>
+<dd>the id of the event that produces the occurrence</dd>
+</dl>
+<p>from here you need a way to distinguish the occurrence and that involves</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">occurrence_id</span></tt></dt>
+<dd>if its persisted</dd>
+</dl>
+<p><strong>or</strong> it requires a distinguishing datetime as designated by the keywords below. This should designate the original start date of the occurrence that you wish to access. Using <tt class="docutils literal"><span class="pre">get_absolute_url</span></tt> from the Occurrence model will help you standardize this.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">year</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">month</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">day</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">hour</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">minute</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">second</span></tt></li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h3>Optional Arguments<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id9">
+<h3>Context Variables<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">event</span></tt></dt>
+<dd>the event that produces the occurrence</dd>
+<dt><tt class="docutils literal"><span class="pre">occurrence</span></tt></dt>
+<dd>the occurrence to be displayed</dd>
+<dt><tt class="docutils literal"><span class="pre">back_url</span></tt></dt>
+<dd>the url from which this request was refered</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="edit-occurrence">
+<h2>edit_occurrence<a class="headerlink" href="#edit-occurrence" title="Permalink to this headline">¶</a></h2>
+<p>This view is used to edit an occurrence.</p>
+<div class="section" id="id10">
+<h3>Required Arguments<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">event_id</span></tt></dt>
+<dd>the id for the event</dd>
+</dl>
+<p>from here you need a way to distinguish the occurrence and that involves</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">occurrence_id</span></tt></dt>
+<dd>the id of the occurrence if its persisted</dd>
+</dl>
+<p><strong>or</strong> it requires a distinguishing datetime as designated by the keywords below. This should designate the original start date of the occurrence that you wish to access. Using <tt class="docutils literal"><span class="pre">get_edit_url</span></tt> from the Occurrence model will help you standardize this.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">year</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">month</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">day</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">hour</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">minute</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">second</span></tt></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>Optional Arguments<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id12">
+<h3>Context Variables<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">form</span></tt></dt>
+<dd>an instance of OccurrenceForm to be displayed</dd>
+<dt><tt class="docutils literal"><span class="pre">occurrence</span></tt></dt>
+<dd>an instance of the occurrence being modified</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="cancel-occurrence">
+<h2>cancel_occurrence<a class="headerlink" href="#cancel-occurrence" title="Permalink to this headline">¶</a></h2>
+<p>This view is used to cancel and occurrence. It is worth noting that canceling an occurrence doesn&#8217;t stop it from being in occurrence lists or being persisted, it just changes the <tt class="docutils literal"><span class="pre">cancelled</span></tt> flag on the instance. It is import to check this flag when listing occurrences.</p>
+<p>Also if this view is requested via POST, it will cancel the event and redirect. If this view is accessed via a GET request it will display a confirmation page.</p>
+<div class="section" id="id13">
+<h3>Required Arguments<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+</dl>
+<p>from here you need a way to distinguish the occurrence and that involves</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">occurrence_id</span></tt></dt>
+<dd>if its persisted</dd>
+</dl>
+<p><strong>or</strong> it requires a distinguishing datetime as designated by the keywords below. This should designate the original start date of the occurrence that you wish to access. Using get_cancel_url from the Occurrence model will help you standardize this.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">year</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">month</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">day</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">hour</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">minute</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">second</span></tt></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h3>Optional Arguments<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered, if this view is accessed via GET</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">next</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>the event detail page of <tt class="docutils literal"><span class="pre">occurrence.event</span></tt></dd>
+</dl>
+<p class="last">This is the url you wish to be redirected to after a successful cancelation</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id15">
+<h3>Context Variables<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">occurrence</span></tt></dt>
+<dd>an instance of the occurrence being modified</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="create-or-edit-event">
+<h2>create_or_edit_event<a class="headerlink" href="#create-or-edit-event" title="Permalink to this headline">¶</a></h2>
+<p>This view is used for creating or editing events. If it receives a GET request or if given an invalid form in a POST request it will render the template, or else it will redirect.</p>
+<div class="section" id="id16">
+<h3>Required Arguments<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">calendar_id</span></tt></dt>
+<dd>This is the calendar id of the event being created or edited.</dd>
+</dl>
+</div>
+<div class="section" id="id17">
+<h3>Optional Arguments<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">event_id</span></tt></dt>
+<dd>if you are editing an event, you need to pass in the id of the event, so that the form can be pre-propagated with the correct information and also so save works correctly</dd>
+<dt><tt class="docutils literal"><span class="pre">next</span></tt></dt>
+<dd>The url to redirect to upon successful completion or edition.</dd>
+</dl>
+</div>
+<div class="section" id="id18">
+<h3>Context Variables<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">form</span></tt></dt>
+<dd>an instance of EventForm to be displayed.</dd>
+<dt><tt class="docutils literal"><span class="pre">calendar</span></tt></dt>
+<dd>a Calendar with id=calendar_id</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="delete-event">
+<h2>delete_event<a class="headerlink" href="#delete-event" title="Permalink to this headline">¶</a></h2>
+<p>This view is for deleting events. If the view is accessed via a POST request it will delete the event. If it is accessed via a GET request it will render a template to ask for confirmation.</p>
+<div class="section" id="id19">
+<h3>Required Arguments<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">request</span></tt></dt>
+<dd>As always the request object</dd>
+<dt><tt class="docutils literal"><span class="pre">event_id</span></tt></dt>
+<dd>the id of the event to be deleted.</dd>
+</dl>
+</div>
+<div class="section" id="id20">
+<h3>Optional Arguments<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">template_name</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd>&#8216;schedule/calendar_by_period.html&#8217;</dd>
+</dl>
+<p class="last">This is the template that will be rendered</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">next</span></tt></dt>
+<dd>The url to redirect to after successful deletion</dd>
+<dt><tt class="docutils literal"><span class="pre">login_required</span></tt></dt>
+<dd><dl class="first docutils">
+<dt>default</dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt></dd>
+</dl>
+<p class="last">if you want to require a login before deletion happens you can set that here</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="id21">
+<h3>Context Variables<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">object</span></tt></dt>
+<dd>The event object to be deleted</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div> 
+        </div>
+      </div>
+    <div class="footer">
+    <p>
+      &copy; Copyright 2012 Calloway Project, 2009, Tony Hauber, Yann Malet, Rock Howard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+	</p>
+    </div>
+      <div class="clearer"></div>
+    </div>
+	<div id="breadcrumbs">
+		Views
+		</ul>
+	</div>
+	<script type="text/javascript" charset="utf-8" src="_static/toc.js"></script>
+  </body>
+</html>

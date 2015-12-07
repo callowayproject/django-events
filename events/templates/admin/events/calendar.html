@@ -1,0 +1,99 @@
+{% extends "admin/change_form.html" %}
+{% load admin_static %}
+{% block extrastyle %}
+    {{ block.super }}
+
+    <script type="text/javascript" src="{% static "admin/js/core.js" %}"></script>
+    <script type="text/javascript" src="{% static "admin/js/jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
+    <script type="text/javascript" src="{% static "admin/js/urlify.js" %}"></script>
+
+    <link href='{% static "fullcalendar/fullcalendar.css" %}' rel='stylesheet' />
+    <link href='{% static "fullcalendar/fullcalendar.print.css" %}' rel='stylesheet' media='print' />
+    <link rel='stylesheet' href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel='stylesheet' href='{% static "tooltipster/css/tooltipster.css" %}' />
+    <link rel='stylesheet' href='{% static "events/admin_calendar.css" %}' />
+
+    <script src='{% static "jquery/jquery-1.9.1.min.js" %}'></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src='{% static "fullcalendar/fullcalendar.js" %}'></script>
+    <script src='{% static "tooltipster/js/jquery.tooltipster.min.js" %}'></script>
+    <script src='{% static "events/underscore-min.js" %}'></script>
+    <script src='{% static "events/search.js" %}'></script>
+    <script src='{% static "events/backbone-min.js" %}'></script>
+
+    {% comment %}<script type='text/javascript' src='{% static "events/admin_calendar_view.js" %}'></script>{% endcomment %}
+    <script src='{% static "events/models/paginated_collection.js" %}'></script>
+    <script src='{% static "events/models/event.js" %}'></script>
+    <script src='{% static "events/models/calendar.js" %}'></script>
+    <script src='{% static "events/models/content.js" %}'></script>
+    <script src='{% static "events/views/eventview.js" %}'></script>
+    <script src='{% static "events/views/calendarview.js" %}'></script>
+    <script src='{% static "events/views/calendarlistview.js" %}'></script>
+    <script src='{% static "events/views/contenttypeview.js" %}'></script>
+    <script src='{% static "events/views/datepickerwidget.js" %}'></script>
+    <script src='{% static "events/views/fullcalendarwidget.js" %}'></script>
+    <script src='{% static "events/views/app.js" %}'></script>
+    <script src='{% static "events/app.js" %}'></script>
+
+{% endblock %}
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+{% block submit_buttons_top %}{% endblock %}
+{% block field_sets %}
+    <div id="calendar_container">
+        <div id="calendar_sidebar">
+            <div id="datepicker"></div>
+            <br />
+            <div class="module">
+                <h3>Calendars</h3>
+                <form name="calendar-selector" id="calendar-selector" action="#">
+                    <ul class="item-list" id="calendarlist">
+                    </ul>
+                </form>
+            </div>
+            <div class="module">
+                <h3>Content</h3>
+                <form name="contenttype-selector" id="contenttype-selector" action="#">
+                <select id="contenttype_chooser">
+                </select>
+                </form>
+                <input type="search" id="filtercontent" style="display: none">
+                <div class="scrollable">
+                    <div id="contentlist">
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+        <div id='calendar'></div>
+    </div>
+    <div style="display:none;" id="edit_dialog" title="This is a recurring event">
+    Do you want to edit this occurrence or all occurrences?
+    </div>
+    {% include "admin/events/dialogs/preview_occur.html" %}
+    {% comment %}
+    <div id="event_edit_container">
+        <form>
+            <input type="hidden" />
+            <ul>
+                <li>
+                    <span>Date: </span><span class="date_holder"></span>
+                </li>
+                <li>
+                    <label for="start">Start Time: </label><select name="start"><option value="">Select Start Time</option></select>
+                </li>
+                <li>
+                    <label for="end">End Time: </label><select name="end"><option value="">Select End Time</option></select>
+                </li>
+                <li>
+                    <label for="title">Title: </label><input type="text" name="title" />
+                </li>
+                <li>
+                    <label for="body">Body: </label><textarea name="body"></textarea>
+                </li>
+            </ul>
+        </form>
+    </div>
+    {% endcomment %}
+{% endblock field_sets %}
+{% block submit_buttons_bottom %}{% endblock %}

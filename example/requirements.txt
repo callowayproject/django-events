@@ -1,0 +1,11 @@
+Django==1.5.1
+Pillow
+gunicorn==0.17.0
+South
+django-bootstrap-form
+psycopg2
+python-dateutil
+vobject
+django-admin-views
+
+#-r ../requirements.txt

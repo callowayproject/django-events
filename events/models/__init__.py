@@ -1,5 +1,5 @@
-from ..models.calendars import *
-from ..models.events import *
-from ..models.rules import *
+from events.models.calendars import Calendar, CalendarRelation  # NOQA
+from events.models.event import Event, EventRelation, Occurrence  # NOQA
+from events.models.rules import *
 
-from ..signals import *
+from events.signals import optionnal_calendar  # NOQA
