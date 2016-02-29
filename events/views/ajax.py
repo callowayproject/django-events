@@ -148,7 +148,7 @@ def contenttype_content(request, contenttype_id):
         per_page = per_page[0]
     request.GET = new_GET
     response = modeladmin.changelist_view(request)
-    qset = response.context_data['cl'].get_query_set(request).all()
+    qset = response.context_data['cl'].get_queryset(request).all()
     if limit_choices_to:
         qset = qset.filter(**limit_choices_to)
     paginator = Paginator(qset, per_page)
