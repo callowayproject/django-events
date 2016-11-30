@@ -5,7 +5,11 @@ import datetime
 from six.moves.builtins import object
 from six import with_metaclass
 
-from django.contrib.contenttypes import generic
+try:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except:
+    from django.contrib.contenttypes.generic import GenericForeignKey
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
@@ -398,7 +402,7 @@ class EventRelation(with_metaclass(ModelBase, *get_model_bases())):
         ContentType,
         limit_choices_to=relation_limits)
     object_id = models.IntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     distinction = models.CharField(
         _("distinction"),
         max_length=20,

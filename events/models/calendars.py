@@ -9,7 +9,12 @@ import pytz
 from django.db import models
 from django.db.models.base import ModelBase
 from django.db.models import Q
-from django.contrib.contenttypes import generic
+
+try:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except:
+    from django.contrib.contenttypes.generic import GenericForeignKey
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
@@ -257,7 +262,7 @@ class CalendarRelation(with_metaclass(ModelBase, *get_model_bases())):
         ContentType,
         limit_choices_to=relation_limits)
     object_id = models.IntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     distinction = models.CharField(
         _("distinction"),
         max_length=20,

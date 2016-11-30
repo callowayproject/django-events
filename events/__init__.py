@@ -1,10 +1,11 @@
 """
 A calendaring and event management application for Django. Based on django-schedule
 """
+
 __version_info__ = {
     'major': 0,
     'minor': 7,
-    'micro': 6,
+    'micro': 7,
     'releaselevel': 'final',
     'serial': 1
 }
