@@ -31,7 +31,7 @@ setup(
     author='Anthony Robert Hauber',
     author_email='webmaster@callowayproject.com',
     url='https://github.com/callowayproject/django-events',
-    packages=find_packages(),
+    packages=find_packages(exclude=('example', 'example.*', )),
     include_package_data=True,
     zip_safe=False,
     classifiers=['Development Status :: 4 - Beta',
