@@ -4,7 +4,7 @@ from admin_views.admin import AdminViews
 from audience.widgets import AdminBitFieldWidget
 from bitfield import BitField
 
-from .genericcollection import GenericCollectionTabularInline
+from contentrelations.genericcollection import GenericCollectionTabularInline
 from .models import Calendar, Event, CalendarRelation, EventRelation, Rule
 from .forms import RuleForm, EventAdminForm
 
