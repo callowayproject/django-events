@@ -67,8 +67,8 @@
 {% block base_content %}
 <form action="." method="post" class="form-horizontal">{% csrf_token %}
 
-    {{ form|bootstrap }}
-    {{ relation_formset|bootstrap }}
+    {{ form }}
+    {{ relation_formset }}
     <div class="form-actions">
         <button class="btn" onclick="window.location='{{ next }}'; return false;">Cancel</button>
         <button type="submit" class="btn btn-primary">Save</button>
