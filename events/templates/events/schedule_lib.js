@@ -1,4 +1,3 @@
-{% load url from future %}
 
 function lead_zero(v){
     /* utility function for formatting datetime */
